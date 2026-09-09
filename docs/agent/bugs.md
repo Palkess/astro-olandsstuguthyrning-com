@@ -23,11 +23,12 @@ a common reason visitors abandon a rental listing.
 
 ### BUG-003 — Gula stugan's photos are low resolution
 Its entire gallery, including the hero (`patio.jpg`), is 1024×768 phone photography; one image
-is 576×768. Every other cottage is 1920×1280. A full-bleed hero will look visibly worse for this
-one cottage.
-**Workaround if no reshoot arrives:** give Gula stugan a constrained (letterboxed or
-reduced-height) hero rather than full-bleed. This constraint must reach the design session.
-**Status:** new photos requested from the owners.
+is 576×768. Every other cottage is 1920×1280.
+**Resolution:** high-resolution replacements will be supplied before launch, so the design
+assumes full-bleed heroes for every cottage. The earlier letterboxed-hero workaround is
+**withdrawn** — do not build it.
+**Status:** open until the new files land. If launch approaches without them, reopen this
+decision rather than shipping a stretched 1024px hero.
 
 ### BUG-004 — German copy is unreviewed
 `src/i18n/*.de.ts` is AI-drafted and ships without native review (plan D16). Kept deliberately
