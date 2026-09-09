@@ -1,0 +1,7 @@
+# Crawling is allowed so that the `noindex` meta tag on staging is actually seen.
+# Blocking crawling here would NOT prevent indexing — it would only stop Google
+# reading the noindex. See src/layouts/Layout.astro.
+User-agent: *
+Disallow:
+
+Sitemap: https://new.olandsstuguthyrning.com/sitemap-index.xml
