@@ -1,0 +1,41 @@
+@import 'tailwindcss';
+
+/*
+ * PLACEHOLDER TOKENS — replaced wholesale by the design session (plan phase 3).
+ * Deliberately neutral so nothing here reads as a design decision.
+ */
+@theme {
+    --color-surface-base: #fcfcfc;
+    --color-surface-muted: #f1f0ec;
+    --color-card: #ffffff;
+    --color-card-border: #e5e3dd;
+    --color-text-heading: #1f2421;
+    --color-text-body: #444b46;
+    --color-text-muted: #6b736d;
+    --color-accent: #3f6b53;
+    --color-accent-contrast: #ffffff;
+}
+
+html,
+body {
+    margin: 0;
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    font-family: system-ui, sans-serif;
+    line-height: 1.5;
+    background-color: var(--color-surface-base);
+    color: var(--color-text-body);
+    -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    color: var(--color-text-heading);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+}

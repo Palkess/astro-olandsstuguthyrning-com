@@ -1,0 +1,53 @@
+---
+/**
+ * PLACEHOLDER layout — rebuilt in phase 4 against the design session output.
+ * Only the parts phases 0–2 need are wired up: lang, title, description,
+ * canonical and hreflang alternates.
+ */
+import '../styles/global.css';
+import { defaultLocale, type Locale } from '../i18n/routes';
+import type { AlternateLink } from '../i18n';
+
+interface Props {
+    locale?: Locale;
+    title: string;
+    description?: string;
+    alternates?: AlternateLink[];
+}
+
+const { locale = defaultLocale, title, description, alternates = [] } = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+
+/**
+ * Anything other than the live apex domain is a staging deployment and must not
+ * be indexed — otherwise the staging copy competes with the real site for the
+ * same Swedish queries. Flips automatically when `site` changes at cutover.
+ */
+const isStaging = Astro.site?.hostname !== 'olandsstuguthyrning.com';
+---
+
+<!doctype html>
+<html lang={locale}>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="generator" content={Astro.generator} />
+        <title>{title}</title>
+        {description && <meta name="description" content={description} />}
+        <link rel="canonical" href={canonical.href} />
+        {isStaging && <meta name="robots" content="noindex, nofollow" />}
+        {
+            alternates.map((alternate) => (
+                <link
+                    rel="alternate"
+                    hreflang={alternate.hreflang}
+                    href={new URL(alternate.href, Astro.site).href}
+                />
+            ))
+        }
+    </head>
+    <body>
+        <slot />
+    </body>
+</html>
