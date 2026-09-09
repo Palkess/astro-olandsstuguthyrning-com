@@ -1,0 +1,73 @@
+---
+/**
+ * Every non-Swedish page below the locale prefix: five cottages plus the three
+ * content pages, in English and German. One file rather than six, because the
+ * only thing that varies is which page component renders — and because the
+ * translated slugs (`birdwatching` / `vogelbeobachtung`) come out of
+ * `routeSlugs` here rather than being repeated as file names.
+ */
+import Layout from '../../layouts/Layout.astro';
+import HomePage from '../../components/pages/HomePage.astro';
+import CottagePage from '../../components/pages/CottagePage.astro';
+import ContactPage from '../../components/pages/ContactPage.astro';
+import BirdwatchingPage from '../../components/pages/BirdwatchingPage.astro';
+import PrivacyPage from '../../components/pages/PrivacyPage.astro';
+
+import { houses, type House } from '../../data/houses';
+import { locales, routeSlugs, type Locale, type RouteKey } from '../../i18n/routes';
+import { getHouseText, useTranslations } from '../../i18n';
+
+export function getStaticPaths() {
+    /*
+     * Declared inside the function on purpose: Astro extracts `getStaticPaths`
+     * into its own chunk, so it cannot see module-scope consts from this file.
+     */
+    const contentRoutes = ['birdwatching', 'privacy', 'contact'] as const;
+    const translated = locales.filter((locale) => locale !== 'sv');
+
+    return translated.flatMap((locale) => [
+        ...houses.map((house) => ({
+            params: { locale, slug: house.slug },
+            props: { locale, routeKey: 'cottage' as RouteKey, house }
+        })),
+        ...contentRoutes.map((routeKey) => ({
+            params: { locale, slug: routeSlugs[routeKey][locale] },
+            props: { locale, routeKey: routeKey as RouteKey, house: undefined }
+        }))
+    ]);
+}
+
+interface Props {
+    locale: Locale;
+    routeKey: RouteKey;
+    house?: House;
+}
+
+const { locale, routeKey, house } = Astro.props;
+
+const t = useTranslations(locale);
+
+const meta = {
+    cottage: house && {
+        title: getHouseText(locale, house.slug).name,
+        description: getHouseText(locale, house.slug).shortDescription
+    },
+    birdwatching: { title: t.birdwatching.heading, description: t.meta.birdwatchingDescription },
+    privacy: { title: t.privacy.heading, description: t.meta.privacyDescription },
+    contact: { title: t.contact.heading, description: t.meta.contactDescription },
+    home: { title: t.meta.homeTitle, description: t.meta.homeDescription }
+}[routeKey] ?? { title: t.meta.homeTitle, description: t.meta.homeDescription };
+---
+
+<Layout
+    {locale}
+    {routeKey}
+    param={house?.slug}
+    title={`${meta.title} | ${t.meta.titleSuffix}`}
+    description={meta.description}>
+    {routeKey === 'cottage' && house && <CottagePage {house} {locale} />}
+    {routeKey === 'contact' && <ContactPage {locale} />}
+    {routeKey === 'birdwatching' && <BirdwatchingPage {locale} />}
+    {routeKey === 'privacy' && <PrivacyPage {locale} />}
+    {routeKey === 'home' && <HomePage {locale} />}
+</Layout>

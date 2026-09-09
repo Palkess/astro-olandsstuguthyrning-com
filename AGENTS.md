@@ -61,6 +61,15 @@ See `docs/agent/` for the full set. The four things most likely to trip you up:
    `src/assets/images/houses/<slug>/`, name into `images` in `houses.ts`, caption into
    **all three** i18n files. A missing file fails the build by design.
 4. **No `set:html` on data-file content.** Multi-paragraph copy is `string[]`.
+5. **Four islands, and only four.** `Header`, `CookieConsent`, `Lightbox`, `YouTubeFacade`.
+   Everything else is static `.astro`. Adding a fifth is a decision, not a detail.
+6. **Style with the design tokens.** Tailwind 4 `@theme` tokens live in
+   `src/styles/global.css` (`bg-surface`, `text-text-muted`, `text-h2`, `rounded-card`,
+   `border-border`…). A one-off hex or font size in a component is a bug. Note the custom
+   `nav:` breakpoint at 1100px, where the desktop nav collapses so German labels don't crowd.
+7. **Nothing third-party loads before consent.** Fonts are self-hosted, the YouTube player is
+   a poster until clicked, and only `CookieConsent.svelte` may load GTM. The privacy policy
+   says so in three languages.
 
 Formatting: Prettier, 4 spaces, single quotes, no trailing commas, width 100.
 TypeScript strict, no `any`.

@@ -1,0 +1,82 @@
+---
+/**
+ * A schematic orientation map: where Öland is, and where Löt sits on it.
+ *
+ * Hand-drawn inline SVG rather than a map embed, deliberately (ADR-014). An
+ * embedded Google or Mapbox map is a third-party request on page load, on the
+ * one page whose neighbour is a privacy policy promising that we make none —
+ * and a raster tile export would still be someone else's copyrighted image.
+ * Inline SVG costs no request, scales, and inherits the design tokens.
+ *
+ * It is a *diagram*, not a survey map: the coastline is simplified and there is
+ * no scale bar, because at whole-island zoom the 2 / 10 / 15 km distances in
+ * the panel beside it are all the same dot. The caption says as much. If a real
+ * cartographic asset ever arrives, replace the paths — the component's whole
+ * API is `alt`.
+ *
+ * Colours come from Tailwind's `fill-*` / `stroke-*` token utilities rather
+ * than `fill="var(…)"` presentation attributes, which browsers do not reliably
+ * substitute. Geometry — `font-size`, `stroke-width`, `r` — stays as numeric
+ * attributes so it scales with the viewBox instead of being frozen in px.
+ *
+ * Every label is a proper noun spelt the same in sv/en/de, so nothing inside
+ * the drawing needs translating; only the accessible description does.
+ */
+interface Props {
+    /** Accessible description of the map. */
+    alt: string;
+    class?: string;
+}
+
+const { alt, class: className } = Astro.props;
+---
+
+<svg
+    viewBox="0 0 400 460"
+    role="img"
+    aria-label={alt}
+    fill="none"
+    class:list={['font-sans block h-auto w-full', className]}>
+    <rect width="400" height="460" class="fill-accent-soft"></rect>
+
+    {/* Småland — the mainland coast, running off three edges. */}
+    <path
+        d="M0 460 L48 460 L80 389 L118 318 L131 279 L144 212 L157 159 L163 106 L182 35 L192 0 L0 0 Z"
+        stroke-width="1.5"
+        stroke-linejoin="round"
+        class="fill-surface-sunken stroke-border-strong">
+    </path>
+
+    {/* Öland. */}
+    <path
+        d="M358 28 L368 71 L362 106 L330 152 L304 188 L282 230 L266 272 L240 318 L208 364 L170 414
+           L144 442 L138 414 L144 372 L150 329 L157 294 L163 265 L182 230 L208 209 L227 195
+           L246 166 L272 131 L304 96 L336 53 Z"
+        stroke-width="1.5"
+        stroke-linejoin="round"
+        class="fill-timber-soft stroke-border-strong">
+    </path>
+
+    {/* Ölandsbron, Kalmar → Färjestaden. */}
+    <path d="M133 278 L163 282" stroke-width="2.5" class="stroke-border-strong"></path>
+
+    <g font-size="17" class="fill-text-muted font-medium">
+        <text transform="translate(192 340) rotate(-62.6)" text-anchor="middle">Öland</text>
+        <text transform="translate(228 124) rotate(-62.6)" text-anchor="middle">Kalmarsund</text>
+    </g>
+
+    {/* Kalmar and Borgholm: context, not destinations. */}
+    <g font-size="15" class="fill-text-body">
+        <circle cx="133" cy="278" r="4" class="fill-text-muted"></circle>
+        <text x="123" y="283" text-anchor="end">Kalmar</text>
+
+        <circle cx="226" cy="202" r="4" class="fill-text-muted"></circle>
+        <text x="216" y="207" text-anchor="end">Borgholm</text>
+    </g>
+
+    {/* Löt. */}
+    <circle cx="261" cy="183" r="13" opacity="0.25" class="fill-accent"></circle>
+    <circle cx="261" cy="183" r="6" stroke-width="2" class="fill-accent stroke-accent-contrast">
+    </circle>
+    <text x="279" y="189" font-size="19" class="fill-text-heading font-semibold">Löt</text>
+</svg>

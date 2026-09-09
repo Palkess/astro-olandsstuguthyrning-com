@@ -56,20 +56,44 @@ cutover.
 `Layout.astro` derives `noindex` from `Astro.site.hostname`, so the staging build is excluded
 from search and the live build isn't — with no flag to remember to flip.
 
-## Islands (planned — phase 4)
+## Islands
 
-| Island | Directive | Why it needs JS |
-|---|---|---|
-| `Lightbox.svelte` | `client:visible` | Full-screen gallery viewing, keyboard nav |
-| `CookieConsent.svelte` | `client:load` | Must render before GTM can fire |
-| `Header.svelte` | `client:load` | Mobile menu + language switcher |
-| `YouTubeFacade.svelte` | `client:visible` | Swaps in the iframe on click |
+Four, and only four. ~68 kB of JS uncompressed across the whole site.
 
-Everything else is static. Adding a fifth island is a decision, not a detail.
+| Island | Directive | Why it needs JS | Degrades to |
+|---|---|---|---|
+| `Header.svelte` | `client:load` | Cottage dropdown, mobile menu | Logo + language links; every cottage is in the footer |
+| `CookieConsent.svelte` | `client:load` | Must render before GTM can fire | No banner, and therefore no GTM |
+| `Lightbox.svelte` | `client:idle` | Full-screen viewing, keyboard nav | Thumbnails stay visible — they're server-rendered |
+| `YouTubeFacade.svelte` | `client:visible` | Injects the iframe on click | A poster image with no player |
+
+Each is passed plain, build-time-resolved data — no i18n tables, no routing helpers, no image
+logic reaches the browser. `Header.astro` is the wrapper that does that resolution.
+
+Adding a fifth island is a decision, not a detail.
+
+**`client:visible` needs a visible box.** Astro's visibility directive observes the island's
+*children*, so a component whose markup starts hidden — the Lightbox renders nothing but a
+closed `<dialog>`, which is `display: none` — never intersects and never hydrates. It fails
+silently: the page looks fine and the feature is simply dead. That is why the Lightbox is
+`client:idle`. Anything else that starts hidden must be too.
 
 ## Components
 
-Atomic: `atoms/` (Button…), `molecules/` (cards, rows), `organisms/` (sections, header, footer).
+```
+components/
+├─ atoms/      Button, SectionLabel, AmenityIcon
+├─ molecules/  CottageCard, AmenityGrid, PricePanel, InfoCard, LocationMap
+├─ organisms/  Header(.astro + .svelte), Footer, CottageGallery, Lightbox,
+│              YouTubeFacade, CookieConsent
+└─ pages/      HomePage, CottagePage, ContactPage, BirdwatchingPage, PrivacyPage
+```
+
+`components/pages/*` hold the page *bodies*. The files under `src/pages/` are thin route
+wrappers that pick a locale, a body and the `<Layout>` metadata — which is why `/en/` and `/de/`
+need one `[locale]/[slug].astro` rather than six files, and why the translated slugs come out of
+`routeSlugs` instead of being repeated as file names.
+
 Astro components by default; `.svelte` only when the thing is an island.
 
 ## How to contribute to this file

@@ -1,0 +1,17 @@
+---
+/** Swedish birdwatching page — `/fagelskadning`. URL preserved from the old site. */
+import Layout from '../layouts/Layout.astro';
+import BirdwatchingPage from '../components/pages/BirdwatchingPage.astro';
+import { useTranslations } from '../i18n';
+
+const locale = 'sv' as const;
+const t = useTranslations(locale);
+---
+
+<Layout
+    {locale}
+    routeKey="birdwatching"
+    title={`${t.birdwatching.heading} | ${t.meta.titleSuffix}`}
+    description={t.meta.birdwatchingDescription}>
+    <BirdwatchingPage {locale} />
+</Layout>

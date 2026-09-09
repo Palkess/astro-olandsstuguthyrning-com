@@ -1,0 +1,144 @@
+---
+/**
+ * Contact page. The old site had no working way to reach Helen and Lars at all
+ * — both numbers lived inside commented-out markup — so this page and the
+ * footer together are the fix for the biggest content bug found (plan D2).
+ *
+ * The design's map tile is a hand-drawn schematic SVG (`LocationMap.astro`),
+ * not an embed: a Google or Mapbox map would be a third-party request before
+ * consent, on the page whose neighbour is a privacy policy promising we make
+ * none. The distances panel beside it carries the actual numbers.
+ */
+import InfoCard from '../molecules/InfoCard.astro';
+import LocationMap from '../molecules/LocationMap.astro';
+import { site } from '../../data/site';
+import { interpolate, useTranslations, type Locale } from '../../i18n';
+
+interface Props {
+    locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+const distances = [
+    { label: t.contact.distanceKopingsvik, km: site.location.distancesKm.kopingsvik },
+    { label: t.contact.distanceBorgholm, km: site.location.distancesKm.borgholm },
+    { label: t.contact.distanceBeach, km: site.location.distancesKm.beach }
+];
+---
+
+<div class="mx-auto max-w-[1440px] px-5 py-12 lg:px-12 lg:py-18">
+    <div class="max-w-[900px]">
+        <h1 class="font-serif text-h1 mt-0 mb-4 font-normal">{t.contact.heading}</h1>
+        <p class="text-lead m-0 max-w-[60ch]">{t.contact.intro}</p>
+    </div>
+
+    <div class="mt-9 grid gap-5 lg:grid-cols-2">
+        <div class="flex min-w-0 flex-col gap-5">
+            <InfoCard label={t.contact.phoneHeading}>
+                <ul class="m-0 flex list-none flex-col gap-3 p-0">
+                    {
+                        site.phones.map((phone) => (
+                            <li>
+                                <a
+                                    href={`tel:${phone.tel}`}
+                                    class="text-accent hover:text-accent-hover text-[1.375rem]/[1.3]
+                                        font-semibold no-underline">
+                                    {phone.display}
+                                </a>
+                                <div class="text-small">
+                                    {interpolate(t.contact.callName, { name: phone.name })}
+                                </div>
+                            </li>
+                        ))
+                    }
+                </ul>
+                <p class="text-text-muted mt-4 mb-0 text-small">{t.contact.languagesNote}</p>
+            </InfoCard>
+
+            <InfoCard label={t.contact.emailHeading}>
+                {
+                    /*
+                     * `wrap-anywhere`, not `break-words`: `overflow-wrap: break-word`
+                     * doesn't feed back into intrinsic sizing, so the unbroken
+                     * address set this grid column's min-content width and the whole
+                     * page scrolled sideways on a 390px screen. Stepping the size up
+                     * only from `sm` means it never actually has to break.
+                     */
+                }
+                <a
+                    href={`mailto:${site.email}`}
+                    class="text-accent hover:text-accent-hover text-body wrap-anywhere
+                        font-semibold no-underline sm:text-h4">
+                    {site.email}
+                </a>
+            </InfoCard>
+
+            <InfoCard label={t.contact.addressHeading}>
+                <address class="not-italic">
+                    {site.name}<br />
+                    {site.owners.join(' & ')}<br />
+                    {site.location.village}, {site.location.island}
+                </address>
+                <p class="bg-surface-sunken rounded-button mt-4 mb-0 px-4 py-3.5 text-small">
+                    {t.contact.directionsNote}
+                </p>
+            </InfoCard>
+        </div>
+
+        <div class="flex min-w-0 flex-col gap-5">
+            <div class="border-border bg-card rounded-card overflow-hidden border">
+                {
+                    /*
+                     * Capped rather than full-bleed: the drawing is 400×460, so at
+                     * the full width of a 1440px column it would render 770px tall
+                     * and dominate a page whose actual content is a phone number.
+                     */
+                }
+                <div class="p-5 pb-2">
+                    <LocationMap alt={t.contact.mapAlt} class="mx-auto max-w-[320px]" />
+                </div>
+                <p class="border-border text-text-muted m-0 border-t px-5 py-3.5 text-small">
+                    {t.contact.mapCaption}
+                </p>
+            </div>
+
+            <InfoCard>
+                <h2 class="font-serif text-h3 mt-0 mb-3.5 font-normal">
+                    {t.contact.distancesHeading}
+                </h2>
+                <dl class="m-0">
+                    {
+                        distances.map((distance, index) => (
+                            <div
+                                class:list={[
+                                    'border-border flex justify-between gap-4 py-2.5',
+                                    index > 0 && 'border-t'
+                                ]}>
+                                <dt class="m-0">{distance.label}</dt>
+                                <dd class="text-text-muted m-0 whitespace-nowrap">
+                                    {interpolate(t.contact.distanceUnit, { km: distance.km })}
+                                </dd>
+                            </div>
+                        ))
+                    }
+                </dl>
+            </InfoCard>
+
+            <InfoCard>
+                <h2 class="font-serif text-h3 mt-0 mb-3.5 font-normal">
+                    {t.contact.bookingHeading}
+                </h2>
+                <p class="m-0">{t.contact.bookingBody}</p>
+            </InfoCard>
+
+            <InfoCard>
+                <h2 class="font-serif text-h3 mt-0 mb-3.5 font-normal">
+                    {t.contact.locationHeading}
+                </h2>
+                <p class="m-0">{t.contact.locationBody}</p>
+            </InfoCard>
+        </div>
+    </div>
+</div>

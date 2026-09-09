@@ -1,0 +1,22 @@
+---
+/**
+ * The small uppercase eyebrow above a section heading ("Om oss", "Fågelskådning").
+ * Letter-spaced .16em per the design's `label` type step.
+ */
+interface Props {
+    /** `accent` is the variant used on the accent-soft band. */
+    tone?: 'muted' | 'accent';
+    class?: string;
+}
+
+const { tone = 'muted', class: className } = Astro.props;
+---
+
+<div
+    class:list={[
+        'font-sans text-label font-semibold tracking-[0.16em] uppercase',
+        tone === 'accent' ? 'text-accent-hover' : 'text-text-muted',
+        className
+    ]}>
+    <slot />
+</div>

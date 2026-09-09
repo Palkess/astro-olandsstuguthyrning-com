@@ -1,0 +1,23 @@
+---
+/**
+ * The plain bordered card the contact and birdwatching pages are built from:
+ * an uppercase label, then whatever the caller slots in.
+ */
+interface Props {
+    label?: string;
+    class?: string;
+}
+
+const { label, class: className } = Astro.props;
+---
+
+<div class:list={['border-border bg-card rounded-card border p-6', className]}>
+    {
+        label && (
+            <div class="text-text-muted mb-3 text-label font-semibold tracking-[0.12em] uppercase">
+                {label}
+            </div>
+        )
+    }
+    <slot />
+</div>

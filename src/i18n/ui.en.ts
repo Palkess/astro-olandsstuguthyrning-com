@@ -40,7 +40,14 @@ export const uiEn: UiStrings = {
         birdBanner: 'A birdwatcher? Read about the birds found close to our cottages.',
         birdBannerCta: 'Go to birdwatching',
         cottagesHeading: 'Our cottages',
-        readMore: 'Read more'
+        readMore: 'Read more',
+        contactCta: 'Contact us',
+        aboutLabel: 'About us',
+        cottagesNote: 'Saturday to Saturday · booking via Stugknuten',
+        locationCardHeading: 'Where are the cottages?',
+        locationCardBody:
+            'Löt is {kopingsvik} km from Köpingsvik, {borgholm} km from Borgholm and {beach} km from the nearest beach.',
+        locationCardCta: 'Contact and directions'
     },
 
     house: {
@@ -49,15 +56,31 @@ export const uiEn: UiStrings = {
         lowSeason: 'Price per week (low season)',
         highSeason: 'Price per week (high season)',
         highSeasonWeeks: 'Weeks {from} – {to}',
+        lowSeasonShort: 'Low season',
+        highSeasonShort: 'High season',
         fromPrice: 'From SEK {price} / week',
         perWeek: 'SEK {price}',
-        bookCta: 'Check availability',
-        bookCtaNote: 'Booking and availability are handled on Stugknuten.',
+        bookCta: 'Book on Stugknuten',
+        bookCtaNote:
+            'Booking and available weeks are handled by Stugknuten. The link opens in a new tab.',
         gallery: 'Gallery',
         changeoverDay: 'Changeover day: Saturday',
         directions: 'Directions are provided when you book.',
         questions: 'If you would like more information, please get in touch.',
-        contactHeading: 'Questions about this cottage?'
+        contactHeading: 'Questions about this cottage?',
+        priceHeading: 'Price per week',
+        priceRange: 'SEK {low}–{high}',
+        perWeekNote: 'per week, Saturday to Saturday',
+        perWeekShort: '/ week',
+        aboutHeading: 'About the cottage',
+        imagesHeading: 'Photos',
+        seeAllImages: 'See all {count} photos',
+        moreImages: '+{count} photos',
+        videoHeading: 'A tour of the house',
+        videoBody: 'The film is hosted on YouTube and only starts once you click it.',
+        bookHeading: 'Would you like to book {name}?',
+        bookBody:
+            'Available weeks and booking are with Stugknuten. If you have questions about the house, you are just as welcome to call us.'
     },
 
     contact: {
@@ -70,19 +93,40 @@ export const uiEn: UiStrings = {
             'The booking itself and current availability are handled through Stugknuten. Each cottage page links to the right listing.',
         locationHeading: 'Where are the cottages?',
         locationBody:
-            'All the cottages are in Löt on eastern Öland, about 10 km from Köpingsvik and 15 km from Borgholm. Directions are provided when you book.'
+            'All the cottages are in Löt on eastern Öland, about 10 km from Köpingsvik and 15 km from Borgholm. Directions are provided when you book.',
+        callName: 'Call {name}',
+        languagesNote: 'We answer in Swedish and English.',
+        addressHeading: 'Address',
+        directionsNote: 'Exact directions to your cottage are provided when you book.',
+        distancesHeading: 'How to find us',
+        distanceUnit: '{km} km',
+        distanceKopingsvik: 'Köpingsvik',
+        distanceBorgholm: 'Borgholm',
+        distanceBeach: 'Nearest beach',
+        mapAlt: 'Map of Öland with Löt marked on the central part of the island, east of Borgholm.',
+        mapCaption: 'Schematic map. Löt is on central Öland, north-east of Borgholm.'
     },
 
     birdwatching: {
         heading: 'Birdwatching on Öland',
-        intro: 'Öland is one of Sweden’s best regions for birdwatching, and our cottages sit right in the middle of it. Below is a list of birds observed in Löt.',
+        intro: 'Öland lies on the migration route of a large part of northern Europe’s bird population. Tens of thousands of birds pass the island each spring and autumn, and the alvar limestone heath holds breeding species that are hard to see anywhere else in the country.',
+        body: [
+            'From Löt you can be out in the Mittlandsskogen woods in a quarter of an hour and at Beijershamn in just under an hour. Ottenby bird observatory, on the island’s southern tip, is about an hour and a half away. Many of our guests come here for the birds and set off before breakfast.',
+            'For several years we have kept a simple list of what has been seen in and around the village. You can download it on this page.'
+        ],
         downloadCta: 'Download the bird list as a PDF',
-        imageAlt: 'List of birds observed in Löt during 2021'
+        imageAlt: 'List of birds observed in Löt during 2021',
+        label: 'Birdwatching',
+        pdfHeading: 'Birds seen in Löt',
+        pdfBody: 'Our own species list of what has been seen in and around the village.',
+        pdfMeta: 'PDF · Swedish and Latin names'
     },
 
     privacy: {
         heading: 'Privacy policy',
         lastUpdatedLabel: 'Last updated',
+        tocHeading: 'On this page',
+        intro: 'This site takes neither bookings nor payments. We collect as little as possible, and pass nothing on.',
         sections: [
             {
                 heading: 'Introduction',
@@ -143,12 +187,15 @@ export const uiEn: UiStrings = {
 
     video: {
         play: 'Play the video of {name}',
+        playShort: 'Play the film',
         note: 'The video loads from YouTube only when you click it.'
     },
 
     footer: {
         rights: 'All rights reserved.',
         contactHeading: 'Contact',
-        cottagesHeading: 'Cottages'
+        cottagesHeading: 'Cottages',
+        moreHeading: 'More',
+        bookingNote: 'Booking is handled by Stugknuten.'
     }
 };

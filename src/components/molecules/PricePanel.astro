@@ -1,0 +1,70 @@
+---
+/**
+ * Low season / high season, plus any extra-cost lines, plus the changeover-day
+ * note. Extra costs get a timber rule down the left so they read as an addition
+ * to the price rather than another tier of it.
+ */
+import type { House } from '../../data/houses';
+import { site } from '../../data/site';
+import { formatNumber } from '../../lib/format';
+import { getHouseText, interpolate, useTranslations, type Locale } from '../../i18n';
+
+interface Props {
+    house: House;
+    locale: Locale;
+    class?: string;
+}
+
+const { house, locale, class: className } = Astro.props;
+
+const t = useTranslations(locale);
+const text = getHouseText(locale, house.slug);
+
+const price = (amount: number) =>
+    interpolate(t.house.perWeek, { price: formatNumber(amount, locale) });
+
+const highSeasonWeeks = interpolate(t.house.highSeasonWeeks, {
+    from: site.highSeason.fromWeek,
+    to: site.highSeason.toWeek
+});
+---
+
+<div class:list={['border-border bg-card rounded-card border px-6 py-5 pb-6', className]}>
+    <h3 class="text-text-heading text-h4 font-semibold">{t.house.priceHeading}</h3>
+
+    <dl class="mt-3.5 m-0">
+        <div class="border-border flex justify-between gap-3 border-t py-3">
+            <dt class="m-0">{t.house.lowSeasonShort}</dt>
+            <dd class="text-text-heading m-0 font-semibold whitespace-nowrap">
+                {price(house.pricePerWeekLowSeason)}
+            </dd>
+        </div>
+
+        <div class="border-border flex justify-between gap-3 border-t py-3">
+            <dt class="m-0">
+                {t.house.highSeasonShort}
+                <span class="text-text-muted block text-small">{highSeasonWeeks}</span>
+            </dt>
+            <dd class="text-text-heading m-0 font-semibold whitespace-nowrap">
+                {price(house.pricePerWeekHighSeason)}
+            </dd>
+        </div>
+
+        {
+            house.extraCostIds.map((id) => (
+                <div
+                    class="border-border border-timber flex justify-between gap-3 border-t border-l-[3px]
+                        py-3 pl-3">
+                    <dt class="m-0">{text.extraCosts[id]?.description}</dt>
+                    <dd class="text-text-heading m-0 font-semibold whitespace-nowrap">
+                        {text.extraCosts[id]?.price}
+                    </dd>
+                </div>
+            ))
+        }
+    </dl>
+
+    <p class="bg-surface-sunken mt-3.5 mb-0 rounded-button px-4 py-3 text-small">
+        {t.house.changeoverDay}. {t.house.directions}
+    </p>
+</div>

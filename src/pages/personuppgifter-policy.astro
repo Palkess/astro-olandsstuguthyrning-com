@@ -1,0 +1,17 @@
+---
+/** Swedish privacy policy — `/personuppgifter-policy`. URL preserved from the old site. */
+import Layout from '../layouts/Layout.astro';
+import PrivacyPage from '../components/pages/PrivacyPage.astro';
+import { useTranslations } from '../i18n';
+
+const locale = 'sv' as const;
+const t = useTranslations(locale);
+---
+
+<Layout
+    {locale}
+    routeKey="privacy"
+    title={`${t.privacy.heading} | ${t.meta.titleSuffix}`}
+    description={t.meta.privacyDescription}>
+    <PrivacyPage {locale} />
+</Layout>

@@ -1,0 +1,97 @@
+---
+/**
+ * Site footer. Carries the contact details on every page — the single biggest
+ * content bug on the old site was that both phone numbers and the email address
+ * existed only inside commented-out markup, so a visitor had no way to reach
+ * Helen and Lars at all (plan D2, bugs.md).
+ */
+import { houses } from '../../data/houses';
+import { site } from '../../data/site';
+import { getHouseText, houseHref, routeHref, useTranslations, type Locale } from '../../i18n';
+
+interface Props {
+    locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+const moreLinks = [
+    { label: t.nav.birdwatching, href: routeHref(locale, 'birdwatching') },
+    { label: t.nav.contact, href: routeHref(locale, 'contact') },
+    { label: t.nav.privacy, href: routeHref(locale, 'privacy') }
+];
+---
+
+<footer class="bg-surface-sunken border-border border-t">
+    <div
+        class="mx-auto grid max-w-[1440px] gap-10 px-5 py-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr]
+            lg:px-12">
+        <div>
+            <div class="font-serif text-text-heading mb-3 text-[1.25rem]">{site.name}</div>
+            <address class="text-small not-italic">
+                {site.owners.join(' & ')}<br />
+                {site.location.village}, {site.location.island}<br />
+                {
+                    site.phones.map((phone) => (
+                        <>
+                            <a
+                                href={`tel:${phone.tel}`}
+                                class="text-accent hover:text-accent-hover">
+                                {phone.display}
+                            </a>
+                            <span class="text-text-muted"> · {phone.name}</span>
+                            <br />
+                        </>
+                    ))
+                }
+                <a href={`mailto:${site.email}`} class="text-accent hover:text-accent-hover">
+                    {site.email}
+                </a>
+            </address>
+        </div>
+
+        <nav aria-labelledby="footer-cottages">
+            <div
+                id="footer-cottages"
+                class="text-text-muted mb-3 text-[0.75rem] font-semibold tracking-[0.1em] uppercase">
+                {t.footer.cottagesHeading}
+            </div>
+            <ul class="m-0 flex list-none flex-col gap-2 p-0 text-small">
+                {
+                    houses.map((house) => (
+                        <li>
+                            <a
+                                href={houseHref(locale, house.slug)}
+                                class="text-text-body hover:text-accent-hover no-underline">
+                                {getHouseText(locale, house.slug).name}
+                            </a>
+                        </li>
+                    ))
+                }
+            </ul>
+        </nav>
+
+        <nav aria-labelledby="footer-more">
+            <div
+                id="footer-more"
+                class="text-text-muted mb-3 text-[0.75rem] font-semibold tracking-[0.1em] uppercase">
+                {t.footer.moreHeading}
+            </div>
+            <ul class="m-0 flex list-none flex-col gap-2 p-0 text-small">
+                {
+                    moreLinks.map((link) => (
+                        <li>
+                            <a
+                                href={link.href}
+                                class="text-text-body hover:text-accent-hover no-underline">
+                                {link.label}
+                            </a>
+                        </li>
+                    ))
+                }
+            </ul>
+            <p class="text-text-muted mt-4 mb-0 text-small">{t.footer.bookingNote}</p>
+        </nav>
+    </div>
+</footer>

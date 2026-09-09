@@ -25,6 +25,13 @@ export const site = {
     /** High season is weeks 25–32 inclusive. */
     highSeason: { fromWeek: 25, toWeek: 32 },
 
+    /**
+     * Shown on the privacy policy. Bump it in the same commit as any change to
+     * `privacy.sections` in `src/i18n/ui.*.ts` — a policy dated before its own
+     * text is worse than one with no date.
+     */
+    privacyLastUpdated: '2026-09-09',
+
     location: {
         village: 'Löt',
         island: 'Öland',
@@ -43,11 +50,18 @@ export const site = {
 /**
  * Stugknuten listing URL for a cottage, in the visitor's language.
  *
- * NOTE: the `/en/` and `/de/` paths are assumed but UNVERIFIED — see
- * docs/project-plan.md §9. If Stugknuten does not serve them, change
- * `stugknutenLocale` to always return 'sv'.
+ * Stugknuten translates the *path segment* as well as the locale prefix, so the
+ * three URLs for one cottage are `/sv/stuga/13541`, `/en/holiday-home/13541`
+ * and `/de/ferienhaus/13541`. Getting only the prefix right yields a 404 on the
+ * single link this whole site exists to deliver — verified by hand, 2026-09-09.
  */
+const stugknutenPaths = {
+    sv: 'stuga',
+    en: 'holiday-home',
+    de: 'ferienhaus'
+} as const;
+
 export function stugknutenUrl(stugknutenId: string, locale: string): string {
     const stugknutenLocale = locale === 'de' ? 'de' : locale === 'en' ? 'en' : 'sv';
-    return `https://www.stugknuten.com/${stugknutenLocale}/stuga/${stugknutenId}`;
+    return `https://www.stugknuten.com/${stugknutenLocale}/${stugknutenPaths[stugknutenLocale]}/${stugknutenId}`;
 }

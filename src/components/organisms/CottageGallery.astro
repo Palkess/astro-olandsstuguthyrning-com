@@ -1,0 +1,166 @@
+---
+/**
+ * The cottage photo grid. Thumbnails are static `<Picture>` markup so the
+ * photos exist in the HTML for crawlers and no-JS visitors; `Lightbox.svelte`
+ * attaches to this grid by id and opens over it.
+ *
+ * The grid clamps to 4 tiles on mobile and 8 on desktop, with the last tile
+ * becoming an overflow tile. There are two overflow tiles rather than one
+ * because the remaining count differs between the breakpoints, and a tile that
+ * says "+7" while seven more are visible is worse than a little duplication.
+ */
+import { Picture, getImage } from 'astro:assets';
+
+import type { House } from '../../data/houses';
+import { getHouseImage } from '../../lib/images';
+import { getHouseText, interpolate, useTranslations, type Locale } from '../../i18n';
+import Lightbox from './Lightbox.svelte';
+
+interface Props {
+    house: House;
+    locale: Locale;
+}
+
+const { house, locale } = Astro.props;
+
+const t = useTranslations(locale);
+const text = getHouseText(locale, house.slug);
+
+const MOBILE_TILES = 3;
+const DESKTOP_TILES = 7;
+
+const gallery = house.images.map((fileName) => ({
+    fileName,
+    image: getHouseImage(house.slug, fileName),
+    caption: text.imageCaptions[fileName] ?? text.name
+}));
+
+/* Full-size variants for the lightbox, generated at build time like everything else. */
+const lightboxImages = await Promise.all(
+    gallery.map(async (item) => {
+        const optimized = await getImage({
+            src: item.image,
+            format: 'webp',
+            widths: [900, 1400, 1920],
+            sizes: '90vw'
+        });
+
+        return {
+            src: optimized.src,
+            srcset: optimized.srcSet.attribute,
+            width: item.image.width,
+            height: item.image.height,
+            caption: item.caption
+        };
+    })
+);
+
+const containerId = `gallery-${house.slug}`;
+
+const overflow = (visible: number) => gallery.length - visible;
+---
+
+<div>
+    <div class="mb-5 flex items-baseline justify-between gap-6">
+        <h2 class="font-serif text-h2 m-0 font-normal">{t.house.imagesHeading}</h2>
+        <button
+            type="button"
+            data-index="0"
+            class="text-accent hover:text-accent-hover border-accent hover:border-accent-hover
+                border-b-[1.5px] pb-1 font-semibold">
+            {interpolate(t.house.seeAllImages, { count: gallery.length })}
+        </button>
+    </div>
+
+    <div id={containerId} class="grid grid-cols-2 gap-2 lg:grid-cols-4 lg:gap-2.5">
+        {
+            gallery.map((item, index) => (
+                <button
+                    type="button"
+                    data-index={index}
+                    aria-label={`${t.gallery.open}: ${item.caption}`}
+                    class:list={[
+                        'group relative block cursor-zoom-in overflow-hidden p-0',
+                        index >= MOBILE_TILES && index < DESKTOP_TILES && 'hidden lg:block',
+                        index >= DESKTOP_TILES && 'hidden'
+                    ]}>
+                    <Picture
+                        src={item.image}
+                        alt={item.caption}
+                        formats={['avif', 'webp']}
+                        widths={[300, 500, 800]}
+                        sizes="(min-width: 1100px) 22vw, 45vw"
+                        loading="lazy"
+                        class="aspect-3/2 w-full object-cover transition-transform duration-300
+                            group-hover:scale-[1.03]"
+                    />
+                </button>
+            ))
+        }
+
+        {
+            overflow(MOBILE_TILES) > 0 && (
+                <button
+                    type="button"
+                    data-index={MOBILE_TILES}
+                    class="relative block cursor-zoom-in overflow-hidden p-0 lg:hidden">
+                    <Picture
+                        src={gallery[MOBILE_TILES].image}
+                        alt=""
+                        formats={['avif', 'webp']}
+                        widths={[300, 500]}
+                        sizes="45vw"
+                        loading="lazy"
+                        class="aspect-3/2 w-full object-cover"
+                    />
+                    <span class="bg-scrim absolute inset-0 flex items-center justify-center font-semibold text-white">
+                        {interpolate(t.house.moreImages, { count: overflow(MOBILE_TILES) })}
+                    </span>
+                </button>
+            )
+        }
+
+        {
+            overflow(DESKTOP_TILES) > 0 && (
+                <button
+                    type="button"
+                    data-index={DESKTOP_TILES}
+                    class="relative hidden cursor-zoom-in overflow-hidden p-0 lg:block">
+                    <Picture
+                        src={gallery[DESKTOP_TILES].image}
+                        alt=""
+                        formats={['avif', 'webp']}
+                        widths={[300, 500]}
+                        sizes="22vw"
+                        loading="lazy"
+                        class="aspect-3/2 w-full object-cover"
+                    />
+                    <span class="bg-scrim absolute inset-0 flex items-center justify-center font-semibold text-white">
+                        {interpolate(t.house.moreImages, { count: overflow(DESKTOP_TILES) })}
+                    </span>
+                </button>
+            )
+        }
+    </div>
+
+    {
+        /*
+         * `client:idle`, NOT `client:visible`. This island's only rendered output is
+         * a closed <dialog>, which is `display: none` and therefore has no layout
+         * box — so a visibility observer never fires and the lightbox never
+         * hydrates. Anything whose markup starts hidden has to hydrate on load or
+         * idle.
+         */
+    }
+    <Lightbox
+        client:idle
+        {containerId}
+        images={lightboxImages}
+        labels={{
+            close: t.gallery.close,
+            next: t.gallery.next,
+            previous: t.gallery.previous,
+            counter: t.gallery.counter
+        }}
+    />
+</div>

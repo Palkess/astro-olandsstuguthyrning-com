@@ -1,0 +1,36 @@
+---
+/**
+ * The single place `AmenityIcon` keys map to lucide components. Adding an
+ * amenity means adding it to `AmenityIcon` in `src/data/houses.ts`, adding a
+ * label in all three `src/i18n/houses.*.ts`, and adding a line here.
+ *
+ * Drawn in `timber`, the design's second accent — icons and rules only, never
+ * type.
+ */
+import { Bed, CookingPot, ShowerHead, WavesHorizontal } from '@lucide/astro';
+import type { AmenityIcon } from '../../data/houses';
+
+interface Props {
+    icon: AmenityIcon;
+    class?: string;
+}
+
+const { icon, class: className } = Astro.props;
+
+const icons = {
+    bed: Bed,
+    kitchen: CookingPot,
+    shower: ShowerHead,
+    swimming: WavesHorizontal
+} as const;
+
+const Icon = icons[icon];
+---
+
+<Icon
+    class:list={['text-timber', className]}
+    size={26}
+    stroke-width={1.6}
+    aria-hidden="true"
+    focusable="false"
+/>

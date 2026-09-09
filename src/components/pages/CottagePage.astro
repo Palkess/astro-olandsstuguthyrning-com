@@ -1,0 +1,175 @@
+---
+/**
+ * Cottage detail page — the page the whole site exists to deliver visitors to.
+ * Everything on it funnels toward one link: the cottage's Stugknuten listing.
+ */
+import { Picture } from 'astro:assets';
+
+import Button from '../atoms/Button.astro';
+import AmenityGrid from '../molecules/AmenityGrid.astro';
+import PricePanel from '../molecules/PricePanel.astro';
+import CottageGallery from '../organisms/CottageGallery.astro';
+import YouTubeFacade from '../organisms/YouTubeFacade.svelte';
+
+import type { House } from '../../data/houses';
+import { site, stugknutenUrl } from '../../data/site';
+import { getHouseImage } from '../../lib/images';
+import { formatNumber } from '../../lib/format';
+import { getHouseText, interpolate, useTranslations, type Locale } from '../../i18n';
+
+interface Props {
+    house: House;
+    locale: Locale;
+}
+
+const { house, locale } = Astro.props;
+
+const t = useTranslations(locale);
+const text = getHouseText(locale, house.slug);
+
+const heroImage = getHouseImage(house.slug, house.mainImage);
+const bookingUrl = stugknutenUrl(house.stugknutenId, locale);
+
+const priceRange = interpolate(t.house.priceRange, {
+    low: formatNumber(house.pricePerWeekLowSeason, locale),
+    high: formatNumber(house.pricePerWeekHighSeason, locale)
+});
+
+const summary = [text.amenityLabels.bed, text.amenityLabels.swimming].join(' · ');
+const playLabel = interpolate(t.video.play, { name: text.name });
+const seeAllImages = interpolate(t.house.seeAllImages, { count: house.images.length });
+---
+
+<!-- Hero + booking panel -->
+<section class="lg:grid lg:grid-cols-[1fr_456px]">
+    <Picture
+        src={heroImage}
+        alt={text.imageCaptions[house.mainImage] ?? text.name}
+        formats={['avif', 'webp']}
+        widths={[600, 1000, 1600, 2000]}
+        sizes="(min-width: 1100px) 68vw, 100vw"
+        loading="eager"
+        fetchpriority="high"
+        class="aspect-3/2 w-full object-cover sm:aspect-[21/9] lg:aspect-auto lg:h-[560px]"
+    />
+
+    <div class="bg-card flex flex-col px-5 py-8 lg:px-11 lg:py-11">
+        <p class="text-text-muted m-0 text-small font-medium">
+            {t.nav.cottages} · {site.location.village}
+        </p>
+        <h1 class="font-serif text-h1 mt-3 mb-2.5 font-normal">{text.name}</h1>
+        <p class="text-lead mt-0 mb-5">{summary}</p>
+
+        <div class="border-border flex flex-wrap items-baseline gap-2.5 border-y py-4">
+            <span class="text-text-heading text-[1.625rem]/[1.2] font-semibold">{priceRange}</span>
+            <span class="text-text-muted">{t.house.perWeekNote}</span>
+        </div>
+
+        <div class="mt-6 flex flex-col gap-3">
+            <Button
+                href={bookingUrl}
+                external
+                full
+                data-outbound="stugknuten"
+                data-cottage={house.slug}
+                class="text-[1.1875rem]! py-5!">
+                {t.house.bookCta}
+            </Button>
+            {/* An anchor rather than a lightbox trigger, so it works without JS. */}
+            <Button href="#bilder" variant="secondary" full>{seeAllImages}</Button>
+        </div>
+
+        <p class="text-text-muted mt-4.5 mb-0 text-small">{t.house.bookCtaNote}</p>
+    </div>
+</section>
+
+<AmenityGrid {house} {locale} />
+
+<!-- Description + price panel -->
+<section
+    class="mx-auto grid max-w-[1440px] items-start gap-10 px-5 py-12 lg:grid-cols-[1fr_420px]
+        lg:gap-16 lg:px-12 lg:py-16">
+    <div class="max-w-[70ch]">
+        <h2 class="font-serif text-h2 mt-0 mb-4 font-normal">{t.house.aboutHeading}</h2>
+        {text.description.map((paragraph) => <p class="mb-4 last:mb-0">{paragraph}</p>)}
+    </div>
+
+    <PricePanel {house} {locale} />
+</section>
+
+<!-- Photos -->
+<section id="bilder" class="mx-auto max-w-[1440px] scroll-mt-24 px-5 pb-14 lg:px-12">
+    <CottageGallery {house} {locale} />
+</section>
+
+<!-- Video -->
+<section
+    class="mx-auto grid max-w-[1440px] items-center gap-8 px-5 pb-16 lg:grid-cols-2 lg:gap-14
+        lg:px-12">
+    <YouTubeFacade
+        client:visible
+        videoId={house.youtubeId}
+        {playLabel}
+        playCaption={t.video.playShort}>
+        <Picture
+            src={heroImage}
+            alt=""
+            formats={['avif', 'webp']}
+            widths={[600, 1000, 1400]}
+            sizes="(min-width: 1100px) 45vw, 100vw"
+            loading="lazy"
+            class="absolute inset-0 h-full w-full object-cover"
+        />
+    </YouTubeFacade>
+
+    <div>
+        <h2 class="font-serif text-h2 mt-0 mb-3.5 font-normal">{t.house.videoHeading}</h2>
+        <p class="m-0">{t.house.videoBody}</p>
+    </div>
+</section>
+
+<!-- Booking band -->
+<section class="bg-accent-soft">
+    <div
+        class="mx-auto flex max-w-[1440px] flex-col gap-6 px-5 py-12 lg:flex-row lg:items-center
+            lg:gap-12 lg:px-12 lg:py-14">
+        <div class="flex-1">
+            <h2 class="font-serif text-h2 mt-0 mb-2.5 font-normal">
+                {interpolate(t.house.bookHeading, { name: text.name })}
+            </h2>
+            <p class="m-0 max-w-[60ch]">
+                {t.house.bookBody}
+                {
+                    site.phones.map((phone, index) => (
+                        <>
+                            {index === 0 ? ' ' : ' · '}
+                            <a
+                                href={`tel:${phone.tel}`}
+                                class="text-accent hover:text-accent-hover font-semibold whitespace-nowrap">
+                                {phone.display}
+                            </a>
+                            <span class="text-text-muted"> ({phone.name})</span>
+                        </>
+                    ))
+                }
+            </p>
+            {
+                /*
+                 * Helen and Lars speak Swedish and English but not German, and this
+                 * band is where a German visitor is being handed a phone number.
+                 * Saying so here is kinder than letting them find out on the call.
+                 */
+            }
+            <p class="text-text-muted mt-2.5 mb-0 text-small">{t.contact.languagesNote}</p>
+        </div>
+
+        <Button
+            href={bookingUrl}
+            external
+            data-outbound="stugknuten"
+            data-cottage={house.slug}
+            class="flex-none text-[1.1875rem]! py-5!">
+            {t.house.bookCta}
+        </Button>
+    </div>
+</section>

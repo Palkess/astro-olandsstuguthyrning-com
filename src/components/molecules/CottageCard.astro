@@ -1,0 +1,79 @@
+---
+/**
+ * The cottage card used on the home page grid. Photo, name, a one-line summary
+ * built from the cottage's own amenity labels, and the price range.
+ *
+ * The whole card is a link: the "Se stugan →" text is a visual affordance, not
+ * a second tab stop.
+ */
+import { Picture } from 'astro:assets';
+import { ArrowRight } from '@lucide/astro';
+
+import type { House } from '../../data/houses';
+import { getHouseImage } from '../../lib/images';
+import { formatNumber } from '../../lib/format';
+import { getHouseText, houseHref, interpolate, useTranslations, type Locale } from '../../i18n';
+
+interface Props {
+    house: House;
+    locale: Locale;
+    /** `eager` for the first row above the fold. */
+    loading?: 'eager' | 'lazy';
+}
+
+const { house, locale, loading = 'lazy' } = Astro.props;
+
+const t = useTranslations(locale);
+const text = getHouseText(locale, house.slug);
+const image = getHouseImage(house.slug, house.mainImage);
+
+/*
+ * The summary line is assembled from real data rather than a new hand-written
+ * string per cottage per locale: bed count and distance to the beach are
+ * already written, in all three languages, as amenity labels.
+ */
+const summary = [text.amenityLabels.bed, text.amenityLabels.swimming].join(' · ');
+
+const priceRange = interpolate(t.house.priceRange, {
+    low: formatNumber(house.pricePerWeekLowSeason, locale),
+    high: formatNumber(house.pricePerWeekHighSeason, locale)
+});
+---
+
+<a
+    href={houseHref(locale, house.slug)}
+    class="group border-border bg-card hover:border-border-strong hover:shadow-card-hover
+        rounded-card flex flex-col overflow-hidden border no-underline transition
+        hover:-translate-y-0.5">
+    <Picture
+        src={image}
+        alt={text.imageCaptions[house.mainImage] ?? text.name}
+        formats={['avif', 'webp']}
+        widths={[400, 700, 1000]}
+        sizes="(min-width: 1100px) 30vw, (min-width: 700px) 45vw, 100vw"
+        loading={loading}
+        class="aspect-3/2 w-full object-cover"
+    />
+
+    <div class="flex flex-1 flex-col p-5">
+        <h3 class="font-serif text-h3 text-text-heading group-hover:text-accent-hover font-normal">
+            {text.name}
+        </h3>
+        <p class="text-text-muted mt-1.5 text-small">{summary}</p>
+
+        <div
+            class="border-border mt-auto flex flex-wrap items-baseline justify-between gap-3
+                border-t pt-3.5">
+            <span class="text-text-heading font-semibold">
+                {priceRange}
+                <span class="text-text-muted text-small font-normal">{t.house.perWeekShort}</span>
+            </span>
+            <span
+                class="text-accent group-hover:text-accent-hover flex items-center gap-1.5
+                    text-small font-semibold">
+                {t.home.readMore}
+                <ArrowRight size={16} stroke-width={2} aria-hidden="true" />
+            </span>
+        </div>
+    </div>
+</a>

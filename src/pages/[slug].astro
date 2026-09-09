@@ -1,0 +1,27 @@
+---
+/** Swedish cottage pages — `/grona-stugan` and friends. */
+import Layout from '../layouts/Layout.astro';
+import CottagePage from '../components/pages/CottagePage.astro';
+
+import { houses } from '../data/houses';
+import { getHouseText, useTranslations } from '../i18n';
+
+export function getStaticPaths() {
+    return houses.map((house) => ({ params: { slug: house.slug }, props: { house } }));
+}
+
+const { house } = Astro.props;
+
+const locale = 'sv' as const;
+const t = useTranslations(locale);
+const text = getHouseText(locale, house.slug);
+---
+
+<Layout
+    {locale}
+    routeKey="cottage"
+    param={house.slug}
+    title={`${text.name} | ${t.meta.titleSuffix}`}
+    description={text.shortDescription}>
+    <CottagePage {house} {locale} />
+</Layout>

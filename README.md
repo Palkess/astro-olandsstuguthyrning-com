@@ -20,7 +20,14 @@ Replaces the SvelteKit + MSSQL + IIS site at
 - TypeScript (strict)
 - Tailwind CSS 4 (`@tailwindcss/vite`, `@theme` tokens)
 - `astro:assets` for image optimization
+- Newsreader + Public Sans, self-hosted from `public/fonts/`
 - GitHub Pages via GitHub Actions
+
+## Third-party requests
+
+There are none until the visitor opts in. Fonts are self-hosted, the YouTube player is a poster
+image until clicked, and Google Tag Manager is loaded only by `CookieConsent.svelte` after an
+explicit accept. The privacy policy states this as fact — keep it true.
 
 ## Prerequisites
 
@@ -45,13 +52,15 @@ root
 ├─ public/                        # copied verbatim: robots.txt, CNAME, bird-list PDF
 └─ src
    ├─ assets/images/houses/<slug> # cottage photos, resolved via src/lib/images.ts
-   ├─ components/{atoms,molecules,organisms}
+   ├─ components
+   │  ├─ {atoms,molecules,organisms}
+   │  └─ pages/                   # page bodies; src/pages/ holds thin route wrappers
    ├─ data/                       # locale-INVARIANT data (houses.ts, site.ts)
    ├─ i18n/                       # all human-readable text, per locale
-   ├─ layouts/
-   ├─ lib/images.ts               # image resolver + build-time validation
+   ├─ layouts/Layout.astro        # head, header, footer, consent banner
+   ├─ lib/                        # images.ts (resolver + build-time validation), format.ts
    ├─ pages/
-   └─ styles/global.css
+   └─ styles/global.css           # @font-face + @theme design tokens
 ```
 
 ## Content model
@@ -91,6 +100,14 @@ path** to reason about. Staging pages carry `noindex` (keyed off the hostname in
 then repointing DNS — a deliberate, one-time change. Follow
 [the cutover runbook](docs/project-plan.md#8-cutover-runbook), which covers the records that must
 **not** be touched.
+
+## Design
+
+The look comes from a separate Claude design session; the brief it was given is
+[docs/design-brief.md](docs/design-brief.md). Its output lives as semantic tokens in
+`src/styles/global.css` — `surface`, `card`, `text-heading`, `accent`, `timber`, `border`,
+`focus`, `scrim`, plus a clamped type scale. Style components with those token utilities
+(`bg-surface`, `text-h2`, `rounded-card`), not with one-off values.
 
 ## Agent documentation
 

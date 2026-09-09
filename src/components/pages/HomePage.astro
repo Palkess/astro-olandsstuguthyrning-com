@@ -1,0 +1,135 @@
+---
+/**
+ * Home page. Hero → who we are → birdwatching band → the five cottages.
+ */
+import { Picture } from 'astro:assets';
+
+import Button from '../atoms/Button.astro';
+import SectionLabel from '../atoms/SectionLabel.astro';
+import CottageCard from '../molecules/CottageCard.astro';
+
+import { houses } from '../../data/houses';
+import { site } from '../../data/site';
+import { getHouseImage } from '../../lib/images';
+import { getHouseText, interpolate, routeHref, useTranslations, type Locale } from '../../i18n';
+
+import portrait from '../../assets/images/lars-och-helen.jpg';
+
+interface Props {
+    locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+/*
+ * There is no dedicated home-page hero photograph in the asset set — the old
+ * site had none either. Until one exists, the hero is the first cottage's
+ * exterior shot, read from the data rather than hard-coded to a file name.
+ */
+const heroHouse = houses[0];
+const heroImage = getHouseImage(heroHouse.slug, heroHouse.mainImage);
+const heroAlt = getHouseText(locale, heroHouse.slug).name;
+
+const distances = site.location.distancesKm;
+---
+
+<!-- Hero -->
+<section class="bg-card lg:relative">
+    <Picture
+        src={heroImage}
+        alt={heroAlt}
+        formats={['avif', 'webp']}
+        widths={[600, 1000, 1600, 2000]}
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+        class="aspect-3/2 w-full object-cover sm:aspect-[21/9] lg:aspect-auto lg:h-[600px]"
+    />
+
+    <div
+        class="mx-auto max-w-[1440px] px-5 lg:absolute lg:inset-x-0 lg:bottom-0 lg:px-12
+            lg:pb-14">
+        <div class="bg-card rounded-card max-w-[620px] py-7 lg:p-10">
+            <h1 class="font-serif text-display m-0 font-normal">{t.home.heading}</h1>
+            <p class="text-lead mt-3.5 mb-6">{t.home.tagline}</p>
+            <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <Button href="#stugorna">{t.home.showCottages}</Button>
+                <Button href={routeHref(locale, 'contact')} variant="secondary">
+                    {t.home.contactCta}
+                </Button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Who we are -->
+<section
+    class="mx-auto grid max-w-[1440px] items-center gap-10 px-5 py-16 lg:grid-cols-2 lg:gap-14 lg:px-12 lg:py-20">
+    <Picture
+        src={portrait}
+        alt={t.home.welcomePortraitAlt}
+        formats={['avif', 'webp']}
+        widths={[500, 800, 1200]}
+        sizes="(min-width: 1100px) 45vw, 100vw"
+        loading="lazy"
+        class="rounded-card aspect-3/2 w-full object-cover"
+    />
+
+    <div>
+        <SectionLabel>{t.home.aboutLabel}</SectionLabel>
+        <h2 class="font-serif text-h2 mt-3.5 mb-4 font-normal">{t.home.welcomeHeading}</h2>
+        {t.home.welcomeBody.map((paragraph) => <p class="mb-4">{paragraph}</p>)}
+        <p class="text-text-muted mb-0">{t.home.welcomeSignature}</p>
+    </div>
+</section>
+
+<!-- Birdwatching -->
+<section class="bg-accent-soft">
+    <div
+        class="mx-auto flex max-w-[1440px] flex-col gap-6 px-5 py-10 lg:flex-row lg:items-center
+            lg:gap-10 lg:px-12 lg:py-11">
+        <div class="flex-1">
+            <SectionLabel tone="accent">{t.birdwatching.label}</SectionLabel>
+            <h2 class="font-serif text-h2 mt-3 mb-2 font-normal">{t.birdwatching.heading}</h2>
+            <p class="m-0 max-w-[62ch]">{t.home.birdBanner}</p>
+        </div>
+        <Button href={routeHref(locale, 'birdwatching')} class="flex-none">
+            {t.home.birdBannerCta}
+        </Button>
+    </div>
+</section>
+
+<!-- The cottages -->
+<section id="stugorna" class="mx-auto max-w-[1440px] scroll-mt-24 px-5 py-16 lg:px-12 lg:py-20">
+    <div class="mb-8 flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+        <h2 class="font-serif text-h2 m-0 font-normal">{t.home.cottagesHeading}</h2>
+        <p class="text-text-muted m-0 text-small">{t.home.cottagesNote}</p>
+    </div>
+
+    <div class="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+        {
+            houses.map((house, index) => (
+                <CottageCard {house} {locale} loading={index < 3 ? 'eager' : 'lazy'} />
+            ))
+        }
+
+        <div
+            class="border-border-strong bg-surface-sunken rounded-card flex flex-col justify-center
+                gap-3 border border-dashed p-6">
+            <h3 class="font-serif text-h3 m-0 font-normal">{t.home.locationCardHeading}</h3>
+            <p class="m-0 text-small">
+                {
+                    interpolate(t.home.locationCardBody, {
+                        kopingsvik: distances.kopingsvik,
+                        borgholm: distances.borgholm,
+                        beach: distances.beach
+                    })
+                }
+            </p>
+            <Button href={routeHref(locale, 'contact')} variant="link" class="self-start">
+                {t.home.locationCardCta}
+            </Button>
+        </div>
+    </div>
+</section>

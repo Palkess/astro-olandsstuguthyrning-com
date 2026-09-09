@@ -1,0 +1,84 @@
+---
+/**
+ * Build-time wrapper for the `Header.svelte` island. Every href, label and
+ * cottage name is resolved here so the island ships as plain data — no i18n
+ * tables and no routing helpers in the browser bundle.
+ */
+import Header from './Header.svelte';
+
+import { houses } from '../../data/houses';
+import { site } from '../../data/site';
+import {
+    getHouseText,
+    houseHref,
+    localeNames,
+    locales,
+    routeHref,
+    useTranslations,
+    type Locale,
+    type RouteKey
+} from '../../i18n';
+
+interface Props {
+    locale: Locale;
+    /** The route this page is, used for the active state and the language links. */
+    routeKey: RouteKey;
+    /** Cottage slug, when `routeKey` is `cottage`. */
+    param?: string;
+}
+
+const { locale, routeKey, param } = Astro.props;
+
+const t = useTranslations(locale);
+
+const navItems = [
+    { key: 'home', label: t.nav.home, href: routeHref(locale, 'home') },
+    /*
+     * The cottages entry opens the dropdown rather than navigating, so its href
+     * is only the no-JS fallback: the home page's cottage grid. Every cottage is
+     * also linked from the footer on every page.
+     */
+    { key: 'cottages', label: t.nav.cottages, href: `${routeHref(locale, 'home')}#stugorna` },
+    { key: 'birdwatching', label: t.nav.birdwatching, href: routeHref(locale, 'birdwatching') },
+    { key: 'contact', label: t.nav.contact, href: routeHref(locale, 'contact') }
+];
+
+const cottages = houses.map((house) => ({
+    name: getHouseText(locale, house.slug).name,
+    href: houseHref(locale, house.slug),
+    beds: getHouseText(locale, house.slug).amenityLabels.bed,
+    current: routeKey === 'cottage' && param === house.slug
+}));
+
+/*
+ * The switcher points at the *same page* in the other language, not at that
+ * language's home page — landing a German speaker on the Swedish front page
+ * because they wanted to read about Gröna stugan is the classic version of
+ * this bug.
+ */
+const languages = locales.map((code) => ({
+    code,
+    name: localeNames[code],
+    href: routeHref(code, routeKey, param),
+    current: code === locale
+}));
+
+const active = routeKey === 'cottage' ? 'cottage' : routeKey;
+---
+
+<Header
+    client:load
+    siteName={site.name}
+    eyebrow={`${site.location.village} · ${site.location.island}`}
+    homeHref={routeHref(locale, 'home')}
+    {navItems}
+    cottagesLabel={t.nav.cottages}
+    {cottages}
+    {languages}
+    {active}
+    labels={{
+        openMenu: t.nav.openMenu,
+        closeMenu: t.nav.closeMenu,
+        chooseLanguage: t.nav.chooseLanguage
+    }}
+/>

@@ -1,0 +1,28 @@
+---
+/** English and German home pages — `/en/` and `/de/`. */
+import Layout from '../../layouts/Layout.astro';
+import HomePage from '../../components/pages/HomePage.astro';
+import { locales, type Locale } from '../../i18n/routes';
+import { useTranslations } from '../../i18n';
+
+export function getStaticPaths() {
+    return locales
+        .filter((locale) => locale !== 'sv')
+        .map((locale) => ({ params: { locale }, props: { locale } }));
+}
+
+interface Props {
+    locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<Layout
+    {locale}
+    routeKey="home"
+    title={`${t.meta.homeTitle} | ${t.meta.titleSuffix}`}
+    description={t.meta.homeDescription}>
+    <HomePage {locale} />
+</Layout>

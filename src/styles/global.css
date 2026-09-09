@@ -1,41 +1,196 @@
 @import 'tailwindcss';
 
-/*
- * PLACEHOLDER TOKENS — replaced wholesale by the design session (plan phase 3).
- * Deliberately neutral so nothing here reads as a design decision.
- */
+/* ---------------------------------------------------------------------------
+ * Fonts — self-hosted, no third-party request. See public/fonts/README.md.
+ *
+ * Both files are variable-weight, so one file covers every weight the site
+ * uses; the `font-weight` ranges below tell the browser that. `latin-ext` is
+ * only fetched if a glyph outside `latin` actually appears — Swedish, English
+ * and German all live inside `latin`, so in practice it never loads.
+ * ------------------------------------------------------------------------- */
+
+@font-face {
+    font-family: 'Newsreader';
+    font-style: normal;
+    font-weight: 400 600;
+    font-display: swap;
+    src: url('/fonts/newsreader-latin.woff2') format('woff2');
+    unicode-range:
+        U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+        U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: 'Newsreader';
+    font-style: normal;
+    font-weight: 400 600;
+    font-display: swap;
+    src: url('/fonts/newsreader-latin-ext.woff2') format('woff2');
+    unicode-range:
+        U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+        U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113,
+        U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+    font-family: 'Public Sans';
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url('/fonts/public-sans-latin.woff2') format('woff2');
+    unicode-range:
+        U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+        U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: 'Public Sans';
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url('/fonts/public-sans-latin-ext.woff2') format('woff2');
+    unicode-range:
+        U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+        U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113,
+        U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* ---------------------------------------------------------------------------
+ * Design tokens — from the phase 3 design session (docs/design-brief.md).
+ *
+ * "Öland light, sand, timber, sea": limestone-warm neutrals carry the page and
+ * a single deep sea blue does all the work of a link, a button and a focus
+ * ring. Timber is a quiet second accent, used for amenity icons and the extra-
+ * cost rule only.
+ *
+ * Every colour is semantic. Do not introduce a one-off hex in a component —
+ * if a component needs a colour that isn't here, that's a token discussion.
+ * ------------------------------------------------------------------------- */
+
 @theme {
-    --color-surface-base: #fcfcfc;
-    --color-surface-muted: #f1f0ec;
-    --color-card: #ffffff;
-    --color-card-border: #e5e3dd;
-    --color-text-heading: #1f2421;
-    --color-text-body: #444b46;
-    --color-text-muted: #6b736d;
-    --color-accent: #3f6b53;
-    --color-accent-contrast: #ffffff;
+    --font-sans: 'Public Sans', system-ui, -apple-system, sans-serif;
+    --font-serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+
+    /* Grounds */
+    --color-surface: oklch(0.972 0.012 85);
+    --color-surface-sunken: oklch(0.938 0.017 84);
+    --color-card: oklch(0.995 0.004 85);
+
+    /* Ink — contrast on `surface`: 14.8:1 / 9.6:1 / 5.4:1 */
+    --color-text-heading: oklch(0.265 0.021 60);
+    --color-text-body: oklch(0.395 0.017 60);
+    --color-text-muted: oklch(0.525 0.014 62);
+
+    /* Sea blue — links, buttons, the booking CTA. 7.1:1 with accent-contrast */
+    --color-accent: oklch(0.455 0.078 218);
+    --color-accent-hover: oklch(0.385 0.072 218);
+    --color-accent-soft: oklch(0.925 0.028 218);
+    --color-accent-contrast: oklch(0.995 0.004 218);
+
+    /* Timber — second accent. Icons and rules, never type. 5.9:1 on surface */
+    --color-timber: oklch(0.505 0.072 55);
+    --color-timber-soft: oklch(0.925 0.03 62);
+
+    --color-border: oklch(0.872 0.014 82);
+    --color-border-strong: oklch(0.76 0.018 80);
+
+    /* Focus ring. Warm, so it reads on the blue button too. */
+    --color-focus: oklch(0.56 0.14 55);
+
+    /* Over photography. Never put text on a bare photo without this. */
+    --color-scrim: oklch(0.23 0.02 60 / 0.62);
+
+    /*
+     * Type scale. The clamps interpolate between the two artboard widths
+     * (390px and 1440px), which is the design's "mobile steps down one notch"
+     * expressed once instead of as a responsive utility on every heading.
+     * Body never goes below 17px.
+     */
+    --text-display: clamp(2.125rem, 1.615rem + 2.095vw, 3.5rem);
+    --text-display--line-height: 1.08;
+    --text-h1: clamp(1.75rem, 1.379rem + 1.524vw, 2.75rem);
+    --text-h1--line-height: 1.12;
+    --text-h2: clamp(1.375rem, 1.143rem + 0.952vw, 2rem);
+    --text-h2--line-height: 1.2;
+    --text-h3: clamp(1.4375rem, 1.36rem + 0.19vw, 1.5625rem);
+    --text-h3--line-height: 1.22;
+    --text-h4: 1.25rem;
+    --text-h4--line-height: 1.32;
+    --text-lead: clamp(1.0625rem, 1.016rem + 0.19vw, 1.1875rem);
+    --text-lead--line-height: 1.7;
+    --text-body: 1.0625rem;
+    --text-body--line-height: 1.75;
+    --text-small: 0.9375rem;
+    --text-small--line-height: 1.6;
+    --text-label: 0.8125rem;
+    --text-label--line-height: 1.4;
+
+    --radius-card: 6px;
+    --radius-button: 5px;
+    --radius-chip: 3px;
+
+    --shadow-card-hover: 0 14px 30px -18px oklch(0.3 0.02 60 / 0.5);
+    --shadow-dropdown: 0 12px 28px -14px oklch(0.3 0.02 60 / 0.35);
+    --shadow-banner: 0 -6px 24px -14px oklch(0.3 0.02 60 / 0.5);
+
+    /*
+     * The desktop nav collapses to the mobile menu here rather than at a
+     * smaller width, so the German labels ("Vogelbeobachtung", "Ferienhäuser")
+     * never have to compress.
+     */
+    --breakpoint-nav: 1100px;
 }
 
-html,
-body {
-    margin: 0;
-    width: 100%;
-    min-height: 100%;
-}
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
 
-body {
-    font-family: system-ui, sans-serif;
-    line-height: 1.5;
-    background-color: var(--color-surface-base);
-    color: var(--color-text-body);
-    -webkit-font-smoothing: antialiased;
-}
+    @media (prefers-reduced-motion: reduce) {
+        html {
+            scroll-behavior: auto;
+        }
+    }
 
-h1,
-h2,
-h3,
-h4 {
-    color: var(--color-text-heading);
-    letter-spacing: -0.02em;
-    line-height: 1.15;
+    body {
+        margin: 0;
+        min-height: 100%;
+        background-color: var(--color-surface);
+        color: var(--color-text-body);
+        font-family: var(--font-sans);
+        font-size: var(--text-body);
+        line-height: 1.75;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+        color: var(--color-text-heading);
+        text-wrap: balance;
+    }
+
+    /*
+     * Tailwind 4's reset dropped the `cursor: pointer` that Tailwind 3 gave
+     * buttons, so every control on the site — consent banner, cottage
+     * dropdown, gallery thumbnails, lightbox — showed the default arrow.
+     * Restored here once rather than as a class on each component.
+     */
+    button:not(:disabled),
+    [role='button']:not([aria-disabled='true']),
+    summary {
+        cursor: pointer;
+    }
+
+    /*
+     * One focus ring for the whole site, visible on every ground the design
+     * uses — including inside the accent button, where a blue ring would
+     * disappear.
+     */
+    :focus-visible {
+        outline: 3px solid var(--color-focus);
+        outline-offset: 2px;
+        border-radius: 2px;
+    }
 }

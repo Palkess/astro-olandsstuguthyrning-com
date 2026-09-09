@@ -81,6 +81,52 @@ put in front of Helen and Lars than a github.io path.
 pages are `noindex`ed via hostname so they cannot compete with the live site in search.
 **Reverses:** the original plan's "verify on *.github.io" step (D11).
 
+## ADR-012 — Design tokens in `@theme`, fonts self-hosted
+**Decision:** The phase 3 design session's palette ships as semantic CSS custom properties in
+`src/styles/global.css` (`surface`, `card`, `text-heading`, `accent`, `timber`, `border`,
+`focus`, `scrim`…), in oklch, with a clamped type scale. Newsreader (headings) and Public Sans
+(body) are served from `public/fonts/` as variable woff2, latin + latin-ext subsets.
+**Why:** Semantic names mean a colour change is one line, not a search-and-replace across
+components. Self-hosting closes the old site's standing `TODO: Download the fonts and host them
+locally` and — more importantly — means the site makes **no third-party request at all** before
+cookie consent, which is what the privacy policy claims.
+**Consequence:** ~160 kB of font over the wire on first load (latin only; latin-ext never
+fetches for sv/en/de). Italics are not shipped — no content uses them.
+**Don't:** add a one-off hex in a component. If a colour isn't a token, that's a token decision.
+
+## ADR-013 — Gallery thumbnails are static; the lightbox attaches to them
+**Decision:** `CottageGallery.astro` renders every thumbnail as server-side `<Picture>` markup
+inside `<button>` elements; `Lightbox.svelte` (`client:visible`) finds that grid by id and
+delegates clicks from it.
+**Why:** The obvious alternative — rendering the grid inside the Svelte island — would keep the
+photos out of the HTML, which costs image indexing and shows nothing without JS. This way the
+photos are always there and only the *enlarging* needs JS.
+**Consequence:** the island takes a `containerId` rather than the thumbnails as props, and the
+full-size variants are generated with `getImage()` at build time and passed in as plain data.
+
+## ADR-014 — The contact map is a hand-drawn SVG, never an embed
+**Decision:** `LocationMap.astro` draws Öland, Kalmarsund, the mainland and Löt as inline SVG,
+styled with the `@theme` tokens. No Google, Mapbox or Leaflet, and no raster tile export.
+**Why:** A map embed is a third-party request on page load, on the page whose neighbour is a
+privacy policy promising we make none — and a tile export is still someone else's copyrighted
+image, needing attribution the design has no room for. Inline SVG costs zero requests, scales,
+and recolours with the palette.
+**Consequence:** It is a *diagram*, not a survey map. The coastline is simplified and there is
+no scale, because at whole-island zoom the 2 / 10 / 15 km figures in the distances panel are all
+the same dot — the caption says "schematic" in all three locales so nobody navigates by it. Its
+labels are proper nouns spelt identically in sv/en/de, so only the `alt` text is translated.
+**Supersedes:** the original "no map at all" decision, which was made because no asset existed.
+Drawing one turned out to be cheaper than sourcing one.
+**Don't:** reach for a tile provider the next time a map is wanted. Extend the SVG.
+
+## ADR-015 — Stugknuten's path segment is translated, not just its locale prefix
+**Decision:** `stugknutenUrl()` maps each locale to both a prefix and a path segment:
+`/sv/stuga/<id>`, `/en/holiday-home/<id>`, `/de/ferienhaus/<id>`.
+**Why:** The plan assumed only the prefix changed. It doesn't, and the wrong segment 404s — on
+the outbound click that is the entire point of the site. Verified against the live listings.
+**Consequence:** adding a locale means adding its Stugknuten segment, not just its prefix. The
+mapping is a `const` beside the function so the two can't drift.
+
 ## How to contribute to this file
 Add an ADR when you add or replace a library, make a non-obvious architectural choice, or
 reverse a previous decision. Record the rationale, not just the outcome.

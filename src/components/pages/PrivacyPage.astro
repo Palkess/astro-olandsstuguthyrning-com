@@ -1,0 +1,106 @@
+---
+/**
+ * Privacy policy. The text is rewritten from the old site's, which described
+ * collecting names, phone numbers and addresses for booking requests — true of
+ * a site with a booking form, false of this one (plan D3). Keep it true: if a
+ * form is ever added, the policy changes in the same commit.
+ *
+ * Section anchors are index-based rather than slugified headings so that
+ * rewording a heading doesn't silently break a link someone has shared.
+ */
+import { site } from '../../data/site';
+import { formatDate } from '../../lib/format';
+import { useTranslations, type Locale } from '../../i18n';
+
+interface Props {
+    locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+const sections = t.privacy.sections.map((section, index) => ({
+    ...section,
+    id: `avsnitt-${index + 1}`
+}));
+
+const lastUpdated = formatDate(site.privacyLastUpdated, locale);
+---
+
+<div
+    class="mx-auto grid max-w-[1440px] items-start gap-10 px-5 py-12 lg:grid-cols-[280px_1fr]
+        lg:gap-18 lg:px-12 lg:py-18">
+    <nav class="lg:sticky lg:top-8" aria-labelledby="privacy-toc">
+        <div
+            id="privacy-toc"
+            class="text-text-muted mb-3.5 text-label font-semibold tracking-[0.12em] uppercase">
+            {t.privacy.tocHeading}
+        </div>
+        <ul class="m-0 flex list-none flex-col gap-2.5 p-0">
+            {
+                sections.map((section) => (
+                    <li>
+                        <a
+                            href={`#${section.id}`}
+                            class="border-border text-text-body hover:text-accent-hover
+                                hover:border-accent block border-l-2 pl-3 no-underline">
+                            {section.heading}
+                        </a>
+                    </li>
+                ))
+            }
+        </ul>
+        <p class="bg-surface-sunken rounded-card mt-6 mb-0 px-4.5 py-4 text-small">
+            {t.privacy.lastUpdatedLabel}&nbsp;
+            {lastUpdated}
+        </p>
+    </nav>
+
+    <div class="max-w-[68ch]">
+        <h1 class="font-serif text-h1 mt-0 mb-5 font-normal">{t.privacy.heading}</h1>
+        <p class="text-lead mt-0 mb-8">{t.privacy.intro}</p>
+
+        {
+            sections.map((section) => (
+                <section id={section.id} class="mb-7 scroll-mt-24">
+                    <h2 class="text-text-heading mt-0 mb-3 text-h4 font-semibold">
+                        {section.heading}
+                    </h2>
+                    {section.body.map((paragraph) => (
+                        <p class="mb-4 last:mb-0">{paragraph}</p>
+                    ))}
+                </section>
+            ))
+        }
+
+        {
+            /*
+             * No heading of its own: the last policy section is already the
+             * "Kontakt" one and says to get in touch. This is the detail it refers
+             * to, not a second section about the same thing.
+             */
+        }
+        <div class="border-border bg-card rounded-card border p-6">
+            <address class="m-0 not-italic">
+                {site.owners.join(' & ')}, {site.location.village}, {site.location.island}<br />
+                {
+                    site.phones.map((phone, index) => (
+                        <>
+                            {index > 0 && ' · '}
+                            <a
+                                href={`tel:${phone.tel}`}
+                                class="text-accent hover:text-accent-hover whitespace-nowrap">
+                                {phone.display}
+                            </a>
+                        </>
+                    ))
+                }<br />
+                <a
+                    href={`mailto:${site.email}`}
+                    class="text-accent hover:text-accent-hover font-semibold">
+                    {site.email}
+                </a>
+            </address>
+        </div>
+    </div>
+</div>

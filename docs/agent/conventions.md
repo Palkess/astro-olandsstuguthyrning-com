@@ -65,6 +65,21 @@ there.
 Default to `.astro`. Reach for `.svelte` only when the component needs client-side state, and
 then give it the narrowest `client:` directive that works.
 
+## Styling
+
+Tailwind 4, tokens in `@theme` in `src/styles/global.css` (ADR-012). Use the semantic token
+utilities — `bg-surface`, `text-text-muted`, `border-border`, `text-h2`, `rounded-card` — not raw
+values. A colour that isn't a token is a token discussion, not an arbitrary-value class.
+
+Two custom pieces worth knowing:
+
+- **`nav:`** is a custom breakpoint at 1100px. The desktop navigation collapses there rather than
+  at `lg`, because the German labels are ~30% longer than the Swedish and the design chose the
+  mobile menu over compressing them.
+- **The type scale clamps.** `text-display`, `text-h1`, `text-h2` and `text-lead` interpolate
+  between the 390px and 1440px artboards, so headings size themselves — don't add responsive
+  font-size utilities on top.
+
 ## Anti-patterns
 
 - Hand-written internal paths (breaks the cutover)
@@ -72,6 +87,8 @@ then give it the narrowest `client:` directive that works.
 - A Swedish string outside `src/i18n/`
 - Adding an island for something CSS can do
 - Changing `roda-stugan`'s slug to match its name (breaks inbound links — see context.md)
+- A one-off colour, radius or font size instead of a token (see Styling above)
+- Loading anything third-party outside the consent island
 
 ## How to contribute to this file
 Add a convention when you agree on a new pattern or reject an existing one. Include the reason.

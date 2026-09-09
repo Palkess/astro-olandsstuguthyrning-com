@@ -35,17 +35,54 @@ decision rather than shipping a stretched 1024px hero.
 short and factual to limit the damage.
 **Action:** hand these two files to a German speaker if one becomes available.
 
-### BUG-005 — Stugknuten locale URLs unverified
-`stugknutenUrl()` in `src/data/site.ts` assumes Stugknuten serves `/en/stuga/<id>` and
-`/de/stuga/<id>` alongside `/sv/`. **This has not been checked.** If it doesn't, non-Swedish
-visitors hit a 404 on the one link that matters most.
-**Action:** verify before launch. Fallback: make the function always return `sv`.
-
 ### BUG-006 — The 2021 bird list may be stale
 `public/Observerade-faglar-i-Lot.pdf` and the accompanying photo are from 2021.
 **Status:** shipping as-is; ask the owners whether a newer list exists.
 
+### BUG-009 — The birdwatching hero is a photo of the bird list, not of birds
+`birdwatching-lot.jpg` is a photograph of the printed species list. The design asked for a
+landscape shot — alvar at dawn — and the asset set has none. Related to [BUG-007]; same ask,
+same owners.
+**Action:** request one wide bird or alvar photograph from Helen and Lars.
+
+### BUG-010 — Birdwatching travel times are estimates, not confirmed
+`birdwatching.body` in `src/i18n/ui.*.ts` quotes "a quarter of an hour" to Mittlandsskogen,
+"just under an hour" to Beijershamn and "about an hour and a half" to Ottenby. These were
+derived from map distances during the phase 3 design write-up, not from the owners, and were
+already rounded upward once from the design's more optimistic figures.
+**Action:** confirm with Helen and Lars — they drive these roads. Cheap to check, and a guest
+who plans a dawn trip around a wrong number will not be pleased.
+
+### BUG-007 — There is no home-page hero photograph
+The home hero uses the **first cottage's** exterior shot (`houses[0].mainImage`), read from the
+data rather than hard-coded, because the asset set contains no wide establishing photo of the
+place — the old site had none either.
+**Action:** ask the owners for one landscape shot of the village or a cottage in evening light
+at 1920×1280 or better, drop it in `src/assets/images/`, and import it directly in
+`HomePage.astro`. Until then this is a deliberate stand-in, not an oversight.
+
+### BUG-008 — The favicon is a placeholder
+`public/favicon.svg` is a plain gable mark drawn from the design tokens. The phase 3 design
+session did not produce a favicon or a logo treatment, and `logo.png` from the old site is a
+raster wordmark that does not reduce to 16px.
+**Action:** replace when a real mark exists. `docs/project-plan.md` §9 tracks it.
+
 ---
+
+## Fixed
+
+### BUG-005 — Stugknuten locale URLs were wrong for en and de *(fixed 2026-09-09)*
+`stugknutenUrl()` translated only the locale prefix, producing `/en/stuga/<id>` and
+`/de/stuga/<id>`. Stugknuten translates the **path segment** too: the real URLs are
+`/sv/stuga/<id>`, `/en/holiday-home/<id>` and `/de/ferienhaus/<id>`. Every English and German
+visitor was being sent to a 404 on the single link this site exists to deliver. Found in manual
+review; all 15 URLs verified against the built HTML.
+
+### `client:visible` on the lightbox never hydrated *(fixed 2026-09-09)*
+`Lightbox.svelte` renders only a closed `<dialog>`. Astro's `client:visible` observes the
+island's children, a `display: none` element never intersects, so the island never hydrated and
+**every gallery thumbnail was inert** — with no error anywhere. Now `client:idle`. Don't change
+it back; see architecture.md.
 
 ## Fixed (inherited from the old site — do not reintroduce)
 

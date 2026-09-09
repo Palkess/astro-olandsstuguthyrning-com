@@ -17,7 +17,7 @@ export const uiSv = {
 
     nav: {
         home: 'Hem',
-        cottages: 'Stugor',
+        cottages: 'Stugorna',
         birdwatching: 'Fågelskådning',
         contact: 'Kontakt',
         privacy: 'Personuppgiftspolicy',
@@ -41,7 +41,14 @@ export const uiSv = {
         birdBanner: 'Fågelskådare? Läs mer om vilka fåglar som finns i närheten av våra stugor!',
         birdBannerCta: 'Gå till fågelskådning',
         cottagesHeading: 'Våra stugor',
-        readMore: 'Läs mer'
+        readMore: 'Läs mer',
+        contactCta: 'Kontakta oss',
+        aboutLabel: 'Om oss',
+        cottagesNote: 'Lördag till lördag · bokning via Stugknuten',
+        locationCardHeading: 'Var ligger stugorna?',
+        locationCardBody:
+            'Löt ligger {kopingsvik} km från Köpingsvik, {borgholm} km från Borgholm och {beach} km från närmaste badstrand.',
+        locationCardCta: 'Kontakt och vägbeskrivning'
     },
 
     house: {
@@ -50,15 +57,32 @@ export const uiSv = {
         lowSeason: 'Pris per vecka (lågsäsong)',
         highSeason: 'Pris per vecka (högsäsong)',
         highSeasonWeeks: 'Vecka {from} – {to}',
+        /* Short forms — used inside the price panel, whose heading already says "per vecka". */
+        lowSeasonShort: 'Lågsäsong',
+        highSeasonShort: 'Högsäsong',
         fromPrice: 'Fr. {price} kr / vecka',
         perWeek: '{price} kr',
-        bookCta: 'Visa tillgänglighet',
-        bookCtaNote: 'Bokning och tillgänglighet hanteras på Stugknuten.',
+        bookCta: 'Boka på Stugknuten',
+        bookCtaNote:
+            'Bokning och tillgängliga veckor sköts av Stugknuten. Länken öppnas i en ny flik.',
         gallery: 'Galleri',
         changeoverDay: 'Bytesdag lördagar',
         directions: 'Vägbeskrivning ges vid bokning.',
         questions: 'Vill ni ha mer information så hör gärna av er!',
-        contactHeading: 'Har du frågor om stugan?'
+        contactHeading: 'Har du frågor om stugan?',
+        priceHeading: 'Pris per vecka',
+        priceRange: '{low}–{high} kr',
+        perWeekNote: 'per vecka, lördag till lördag',
+        perWeekShort: '/ vecka',
+        aboutHeading: 'Om stugan',
+        imagesHeading: 'Bilder',
+        seeAllImages: 'Se alla {count} bilder',
+        moreImages: '+{count} bilder',
+        videoHeading: 'En rundtur i huset',
+        videoBody: 'Filmen ligger på YouTube och startar först när ni klickar på den.',
+        bookHeading: 'Vill ni boka {name}?',
+        bookBody:
+            'Lediga veckor och bokning finns hos Stugknuten. Har ni frågor om huset går det lika bra att ringa oss direkt.'
     },
 
     contact: {
@@ -71,19 +95,40 @@ export const uiSv = {
             'Själva bokningen och den aktuella tillgängligheten sköts via Stugknuten. Du hittar en länk till rätt stuga på varje stugsida.',
         locationHeading: 'Var ligger stugorna?',
         locationBody:
-            'Samtliga stugor ligger i Löt på östra Öland, ca 10 km från Köpingsvik och 15 km från Borgholm. Vägbeskrivning ges vid bokning.'
+            'Samtliga stugor ligger i Löt på östra Öland, ca 10 km från Köpingsvik och 15 km från Borgholm. Vägbeskrivning ges vid bokning.',
+        callName: 'Ring {name}',
+        languagesNote: 'Vi svarar på svenska och engelska.',
+        addressHeading: 'Adress',
+        directionsNote: 'Exakt vägbeskrivning till er stuga lämnas vid bokning.',
+        distancesHeading: 'Så hittar ni hit',
+        distanceUnit: '{km} km',
+        distanceKopingsvik: 'Köpingsvik',
+        distanceBorgholm: 'Borgholm',
+        distanceBeach: 'Närmaste badstrand',
+        mapAlt: 'Karta över Öland med Löt utmarkerat på öns mellersta del, öster om Borgholm.',
+        mapCaption: 'Schematisk karta. Löt ligger på mellersta Öland, nordost om Borgholm.'
     },
 
     birdwatching: {
         heading: 'Fågelskådning på Öland',
-        intro: 'Öland är ett av Sveriges bästa landskap för fågelskådning, och våra stugor ligger mitt i det. Nedan finns en lista över fåglar som observerats i Löt.',
+        intro: 'Öland ligger i sträckvägen för stora delar av det nordeuropeiska flyttfågelbeståndet. Under vår och höst passerar tiotusentals fåglar ön, och på alvaret häckar arter som är svåra att få se någon annanstans i landet.',
+        body: [
+            'Från Löt tar ni er ut i Mittlandsskogen på en kvart och till Beijershamn på knappt en timme. Ottenby fågelstation längst ner på södra udden ligger omkring en och en halv timme bort. Många av våra gäster kommer hit just för fåglarnas skull och ger sig ut redan före frukost.',
+            'Vi för sedan flera år en enkel lista över vad som setts i och omkring byn. Den finns att ladda ner på den här sidan.'
+        ],
         downloadCta: 'Ladda ner fågellistan som pdf',
-        imageAlt: 'Lista på fåglar skådade i Löt under 2021'
+        imageAlt: 'Lista på fåglar skådade i Löt under 2021',
+        label: 'Fågelskådning',
+        pdfHeading: 'Fåglar sedda i Löt',
+        pdfBody: 'Vår egen artlista över vad som setts i och omkring byn.',
+        pdfMeta: 'PDF · svenska och latinska namn'
     },
 
     privacy: {
         heading: 'Personuppgiftspolicy',
         lastUpdatedLabel: 'Senast uppdaterad',
+        tocHeading: 'På denna sida',
+        intro: 'Den här sidan tar varken emot bokningar eller betalningar. Vi samlar in så lite som möjligt, och delar ingenting vidare.',
         sections: [
             {
                 heading: 'Inledning',
@@ -144,13 +189,17 @@ export const uiSv = {
 
     video: {
         play: 'Spela upp videon om {name}',
+        /* Visible caption on the poster; `play` remains the accessible name. */
+        playShort: 'Spela film',
         note: 'Videon laddas från YouTube först när du klickar på den.'
     },
 
     footer: {
         rights: 'Alla rättigheter förbehållna.',
         contactHeading: 'Kontakt',
-        cottagesHeading: 'Stugor'
+        cottagesHeading: 'Stugor',
+        moreHeading: 'Mer',
+        bookingNote: 'Bokning sker via Stugknuten.'
     }
 };
 

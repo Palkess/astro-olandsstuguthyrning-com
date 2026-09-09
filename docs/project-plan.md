@@ -1,6 +1,6 @@
 # Project plan — olandsstuguthyrning.com rewrite
 
-**Status:** phases 0–2 complete (2026-09-09); phase 3 (design session) is the current blocker for phases 4–5
+**Status:** phases 0–5 complete (2026-09-09). Next: phase 6 (SEO, JSON-LD, analytics).
 **Written:** 2026-09-09
 **Supersedes:** `github.com/Palkess/olandsstuguthyrning-svelte` (SvelteKit 2 + MSSQL + IIS)
 
@@ -125,10 +125,10 @@ The `iconName` keys in `houses.ts` stay as the mapping key.
   | `roda-stugan` | `https://www.stugknuten.com/sv/stuga/20992` |
   | `beiga-stugan` | `https://www.stugknuten.com/sv/stuga/9125` |
 
-  Stored **without** the locale segment (`stugknuten.com/{locale}/stuga/13541`), so the booking
-  button can send a German visitor to the German listing rather than the Swedish one.
-  ⚠️ **Unverified** — confirm Stugknuten actually serves `/en/` and `/de/` before relying on it;
-  fall back to `/sv/` for all locales if not.
+  Stored as the bare listing id, so the booking button can send a German visitor to the German
+  listing rather than the Swedish one. ✅ **Verified 2026-09-09** — and Stugknuten translates the
+  *path segment* as well as the prefix: `/sv/stuga/13541`, `/en/holiday-home/13541`,
+  `/de/ferienhaus/13541`. `stugknutenUrl()` in `src/data/site.ts` holds the mapping (ADR-015).
 - **Drop `name`, `shortDescription`, `description`** → move to `src/i18n/houses.*.ts`.
 - **`images`** becomes `string[]` of file names; captions move to the i18n files, keyed by file name.
 - **`info`** keeps `iconName` only; labels move to i18n.
@@ -246,23 +246,37 @@ constraint must be communicated to the design session.
 - Rewrite the privacy policy text for all three locales: no personal data collected; cookies/analytics only; contact address.
 - ✅ **Done when:** all three locale trees prerender with correct content and `hreflang` alternates.
 
-### Phase 3 — ⏸ Design session *(external, blocking for phases 4–5)*
-Brief: **[docs/design-brief.md](design-brief.md)** — self-contained, paste into a fresh session.
+### Phase 3 — Design session ✅ *complete 2026-09-09*
+Brief: **[docs/design-brief.md](design-brief.md)**. All seven artboards delivered: tokens and
+type scale, the component set with states, and home / cottage / kontakt / fågelskådning /
+privacy at 1440 and 390.
 
-Deliverables needed from it, mobile + desktop: **home**, **cottage detail**, **kontakt**,
-**fågelskådning**, **privacy policy**, plus **header w/ language switcher**, **footer**,
-**cookie banner**, **lightbox**, **YouTube poster**, and the `@theme` token set.
+Direction: *"Öland light, sand, timber, sea"* — limestone-warm neutrals, one deep sea blue doing
+the work of link, button and focus ring, timber as a quiet second accent for icons and rules.
+Newsreader for headings, Public Sans for everything else. Tokens are in `src/styles/global.css`
+(ADR-012).
 
-### Phase 4 — Components *(after design)*
-Atoms/molecules/organisms per the existing convention. Four islands only (D10): `Lightbox.svelte`
-(`client:visible`, native `<dialog>`, keyboard nav — custom, not a port of the old vendored
-`svelte-lightbox`), `CookieConsent.svelte` (`client:load`), `Header.svelte` incl. language
-switcher, `YouTubeFacade.svelte` (poster + play, iframe injected on click — avoids ~1 MB of
-player and a third-party embed loading before consent).
+One thing in the artboards was deliberately **not** built: a per-amenity secondary detail line,
+which would have meant inventing copy in three languages for content that doesn't exist. The
+contact page's map tile *is* built, as a hand-drawn schematic SVG rather than an embed
+(ADR-014).
 
-### Phase 5 — Pages *(after design)*
-`index`, `[slug]`, `kontakt`, `fagelskadning`, `personuppgifter-policy` × 3 locales ≈ 27 routes.
-Contact block (both phones + email) in the footer and on every house page — closing the D2 gap.
+### Phase 4 — Components ✅ *complete 2026-09-09*
+Atoms/molecules/organisms per `docs/agent/architecture.md`. Four islands, no more (D10):
+`Header.svelte` (`client:load`, dropdown + mobile menu + language switcher), `CookieConsent.svelte`
+(`client:load`, the only thing that may load GTM), `Lightbox.svelte` (`client:visible`, native
+`<dialog>` — written, not a port of the old vendored `svelte-lightbox`), `YouTubeFacade.svelte`
+(`client:visible`, poster is the cottage's own photo so not even the thumbnail comes from Google).
+
+~68 kB of JS uncompressed for the whole site.
+
+### Phase 5 — Pages ✅ *complete 2026-09-09*
+27 routes: `index`, `[slug]`, `kontakt`, `fagelskadning`, `personuppgifter-policy` × 3 locales.
+Contact block (both phones + email) in the footer and on every cottage page — closing the D2 gap.
+
+Route files are thin; the page bodies live in `src/components/pages/`. English and German share
+one `[locale]/[slug].astro`, which takes the translated slugs from `routeSlugs` rather than
+repeating them as file names.
 
 ### Phase 6 — SEO and analytics
 Per-house `VacationRental` JSON-LD (name, description, images, occupancy/bedrooms from `info`,
@@ -341,11 +355,13 @@ until Phase 9, so rollback is a DNS change and nothing more.
 |---|---|---|
 | Registrar / DNS provider access | Owners or Jonas | **Phase 0** — now needed for the staging CNAME too |
 | GTM container access for `GTM-M436Z79H` | Jonas | Phase 6 |
-| Does Stugknuten serve `/en/` and `/de/` listing URLs? | Verify directly | Phase 5 (fallback: `/sv/` everywhere) |
 | New Gula stugan photos | Owners | No — fallback in §5.4 |
 | Confirm 2026 prices and fee amounts | Owners | No (D19) — but ask at Phase 7 review |
 | Is the 2021 bird list current? | Owners | No |
-| Favicon / logo | Design session | Phase 4 |
+| Favicon / logo | Owners or a designer | No — placeholder mark in place, BUG-008 |
+| A home-page hero photograph | Owners | No — first cottage's exterior stands in, BUG-007 |
+| A landscape bird/alvar photograph | Owners | No — the bird-list photo stands in, BUG-009 |
+| Confirm the birdwatching travel times | Owners | No — estimated from distances, BUG-010 |
 
 ## 10. Bugs inherited from the old site (fix, don't reproduce)
 

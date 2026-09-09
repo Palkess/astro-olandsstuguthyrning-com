@@ -1,23 +1,38 @@
 ---
 /**
- * PLACEHOLDER layout — rebuilt in phase 4 against the design session output.
- * Only the parts phases 0–2 need are wired up: lang, title, description,
- * canonical and hreflang alternates.
+ * The single page shell: head, skip link, header, footer and the consent
+ * banner. Every page renders through this.
+ *
+ * It derives its own `hreflang` alternates and canonical from `routeKey` /
+ * `param` rather than taking them as props, so a page can't ship a canonical
+ * that disagrees with the URL it's served from.
  */
 import '../styles/global.css';
-import { defaultLocale, type Locale } from '../i18n/routes';
-import type { AlternateLink } from '../i18n';
+
+import Header from '../components/organisms/Header.astro';
+import Footer from '../components/organisms/Footer.astro';
+import CookieConsent from '../components/organisms/CookieConsent.svelte';
+
+import { alternateLinks, routeHref, useTranslations } from '../i18n';
+import { defaultLocale, type Locale, type RouteKey } from '../i18n/routes';
 
 interface Props {
     locale?: Locale;
+    routeKey: RouteKey;
+    /** Cottage slug, when `routeKey` is `cottage`. */
+    param?: string;
     title: string;
     description?: string;
-    alternates?: AlternateLink[];
+    /** Absolute-ready OG image path, if the page has one. */
+    ogImage?: string;
 }
 
-const { locale = defaultLocale, title, description, alternates = [] } = Astro.props;
+const { locale = defaultLocale, routeKey, param, title, description, ogImage } = Astro.props;
+
+const t = useTranslations(locale);
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const alternates = alternateLinks(routeKey, param);
 
 /**
  * Anything other than the live apex domain is a staging deployment and must not
@@ -31,12 +46,14 @@ const isStaging = Astro.site?.hostname !== 'olandsstuguthyrning.com';
 <html lang={locale}>
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="generator" content={Astro.generator} />
+
         <title>{title}</title>
         {description && <meta name="description" content={description} />}
         <link rel="canonical" href={canonical.href} />
         {isStaging && <meta name="robots" content="noindex, nofollow" />}
+
         {
             alternates.map((alternate) => (
                 <link
@@ -46,8 +63,60 @@ const isStaging = Astro.site?.hostname !== 'olandsstuguthyrning.com';
                 />
             ))
         }
+
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content={t.meta.titleSuffix} />
+        <meta property="og:title" content={title} />
+        {description && <meta property="og:description" content={description} />}
+        <meta property="og:url" content={canonical.href} />
+        {ogImage && <meta property="og:image" content={new URL(ogImage, Astro.site).href} />}
+        <meta name="twitter:card" content="summary_large_image" />
+
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+        {/* Self-hosted; latin only — latin-ext never loads for sv/en/de. */}
+        <link
+            rel="preload"
+            href="/fonts/newsreader-latin.woff2"
+            as="font"
+            type="font/woff2"
+            crossorigin
+        />
+        <link
+            rel="preload"
+            href="/fonts/public-sans-latin.woff2"
+            as="font"
+            type="font/woff2"
+            crossorigin
+        />
+
+        <slot name="head" />
     </head>
-    <body>
-        <slot />
+
+    <body class="flex min-h-screen flex-col">
+        <a
+            href="#main"
+            class="bg-accent text-accent-contrast sr-only rounded-button px-4 py-3 font-semibold
+                focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50">
+            {t.nav.skipToContent}
+        </a>
+
+        <Header {locale} {routeKey} {param} />
+
+        <main id="main" class="flex-1">
+            <slot />
+        </main>
+
+        <Footer {locale} />
+
+        <CookieConsent
+            client:load
+            heading={t.cookies.heading}
+            body={t.cookies.body}
+            accept={t.cookies.accept}
+            decline={t.cookies.decline}
+            readMore={t.cookies.readMore}
+            privacyHref={routeHref(locale, 'privacy')}
+        />
     </body>
 </html>

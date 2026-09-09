@@ -1,121 +1,17 @@
 ---
-/**
- * PLACEHOLDER / SMOKE TEST — replaced by the real home page in phase 5.
- *
- * Its job right now is to prove phases 1–2 are wired correctly: every image in
- * `houses.ts` resolves through `getHouseImage`, every caption key matches, and
- * `routeHref` produces correct locale + base paths. If this page builds, the
- * data layer is sound.
- */
-import { Picture } from 'astro:assets';
-
+/** Swedish home page — `/`. */
 import Layout from '../layouts/Layout.astro';
-import { houses } from '../data/houses';
-import { site, stugknutenUrl } from '../data/site';
-import { getHouseGallery, getHouseImage } from '../lib/images';
-import { alternateLinks, getHouseText, houseHref, routeHref, useTranslations } from '../i18n';
-import { localeNames, locales } from '../i18n/routes';
+import HomePage from '../components/pages/HomePage.astro';
+import { useTranslations } from '../i18n';
 
 const locale = 'sv' as const;
 const t = useTranslations(locale);
 ---
 
 <Layout
-    locale={locale}
-    title={`${t.meta.homeTitle} – ${t.meta.titleSuffix}`}
-    description={t.meta.homeDescription}
-    alternates={alternateLinks('home')}>
-    <main style="max-width: 70rem; margin: 0 auto; padding: 2rem 1rem;">
-        <p style="padding: .75rem 1rem; background: #fff6d8; border: 1px solid #e8d9a0;">
-            <strong>Scaffold placeholder.</strong> Phases 0–2 complete; real pages arrive in phase 5 once
-            the design lands.
-        </p>
-
-        <h1>{t.home.heading}</h1>
-        <p>{t.home.tagline}</p>
-
-        <h2>Route check</h2>
-        <ul>
-            {
-                locales.map((entry) => (
-                    <li>
-                        <strong>{localeNames[entry]}</strong>:{' '}
-                        <code>{routeHref(entry, 'home')}</code> ·{' '}
-                        <code>{routeHref(entry, 'birdwatching')}</code> ·{' '}
-                        <code>{routeHref(entry, 'privacy')}</code> ·{' '}
-                        <code>{routeHref(entry, 'contact')}</code> ·{' '}
-                        <code>{houseHref(entry, 'grona-stugan')}</code>
-                    </li>
-                ))
-            }
-        </ul>
-
-        <h2>{t.home.cottagesHeading}</h2>
-        {
-            houses.map((house) => {
-                const text = getHouseText(locale, house.slug);
-                const gallery = getHouseGallery(house.slug, house.images);
-                return (
-                    <section style="margin: 3rem 0; border-top: 1px solid #ddd; padding-top: 1.5rem;">
-                        <h3>{text.name}</h3>
-                        <p>{text.shortDescription}</p>
-                        <p>
-                            <a href={stugknutenUrl(house.stugknutenId, locale)} rel="noopener">
-                                {t.house.bookCta}
-                            </a>{' '}
-                            · {t.house.changeoverDay}
-                        </p>
-                        <ul>
-                            {house.amenities.map((amenity) => (
-                                <li>{text.amenityLabels[amenity]}</li>
-                            ))}
-                            {house.extraCostIds.map((id) => (
-                                <li>
-                                    {text.extraCosts[id]?.description}: {text.extraCosts[id]?.price}
-                                </li>
-                            ))}
-                        </ul>
-                        <Picture
-                            src={getHouseImage(house.slug, house.mainImage)}
-                            formats={['avif', 'webp']}
-                            widths={[400, 800]}
-                            sizes="(max-width: 800px) 100vw, 800px"
-                            alt={text.imageCaptions[house.mainImage] ?? text.name}
-                            style="max-width: 100%; height: auto;"
-                        />
-                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; margin-top: 1rem;">
-                            {gallery.map((image, index) => (
-                                <figure style="margin: 0;">
-                                    <Picture
-                                        src={image}
-                                        formats={['avif', 'webp']}
-                                        widths={[180, 360]}
-                                        sizes="180px"
-                                        alt={text.imageCaptions[house.images[index]!] ?? ''}
-                                        style="width: 100%; height: auto;"
-                                    />
-                                    <figcaption style="font-size: .8rem;">
-                                        {text.imageCaptions[house.images[index]!]}
-                                    </figcaption>
-                                </figure>
-                            ))}
-                        </div>
-                    </section>
-                );
-            })
-        }
-
-        <footer style="margin-top: 3rem; border-top: 1px solid #ddd; padding-top: 1rem;">
-            <p>
-                {
-                    site.phones.map((phone) => (
-                        <a href={`tel:${phone.tel}`} style="margin-right: 1rem;">
-                            {phone.display} ({phone.name})
-                        </a>
-                    ))
-                }
-                <a href={`mailto:${site.email}`}>{site.email}</a>
-            </p>
-        </footer>
-    </main>
+    {locale}
+    routeKey="home"
+    title={`${t.meta.homeTitle} | ${t.meta.titleSuffix}`}
+    description={t.meta.homeDescription}>
+    <HomePage {locale} />
 </Layout>

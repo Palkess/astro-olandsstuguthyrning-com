@@ -1,0 +1,34 @@
+---
+/**
+ * The amenity strip on a cottage page: four across on desktop, 2×2 on tablet,
+ * stacked on mobile.
+ *
+ * The 1px rules between cells are the grid's own background showing through a
+ * `gap-px`, rather than per-cell borders. That way the separators stay correct
+ * at every column count without a single nth-child rule.
+ */
+import AmenityIcon from '../atoms/AmenityIcon.astro';
+import type { House } from '../../data/houses';
+import { getHouseText, type Locale } from '../../i18n';
+
+interface Props {
+    house: House;
+    locale: Locale;
+}
+
+const { house, locale } = Astro.props;
+const text = getHouseText(locale, house.slug);
+---
+
+<ul
+    class="bg-border border-border m-0 grid list-none gap-px border-y p-0 sm:grid-cols-2
+        lg:grid-cols-4">
+    {
+        house.amenities.map((amenity) => (
+            <li class="bg-card flex flex-col gap-2.5 px-6 py-6">
+                <AmenityIcon icon={amenity} />
+                <span class="text-text-heading font-semibold">{text.amenityLabels[amenity]}</span>
+            </li>
+        ))
+    }
+</ul>
