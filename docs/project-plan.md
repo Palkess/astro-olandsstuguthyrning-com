@@ -247,12 +247,11 @@ constraint must be communicated to the design session.
 - ✅ **Done when:** all three locale trees prerender with correct content and `hreflang` alternates.
 
 ### Phase 3 — ⏸ Design session *(external, blocking for phases 4–5)*
-Deliverables needed from it, mobile + desktop: **home**, **house detail**, **kontakt**,
+Brief: **[docs/design-brief.md](design-brief.md)** — self-contained, paste into a fresh session.
+
+Deliverables needed from it, mobile + desktop: **home**, **cottage detail**, **kontakt**,
 **fågelskådning**, **privacy policy**, plus **header w/ language switcher**, **footer**,
-**cookie banner**, **lightbox**, and the `@theme` token set. Constraints to hand over:
-Swedish/English/German label lengths (German runs ~30% longer), the Gula stugan low-resolution
-problem (§5.4), and that a "Boka på Stugknuten" CTA must be the most prominent element on a
-house page.
+**cookie banner**, **lightbox**, **YouTube poster**, and the `@theme` token set.
 
 ### Phase 4 — Components *(after design)*
 Atoms/molecules/organisms per the existing convention. Four islands only (D10): `Lightbox.svelte`
