@@ -37,7 +37,20 @@ Push to `main` → `.github/workflows/deploy.yml` → `npm ci` → `npm run chec
 ### Environment
 
 `PUBLIC_GTM_ID` is a **repository variable** (not a secret — it ends up in the client bundle by
-design). Set it in Settings → Secrets and variables → Actions → Variables.
+design). Set it in Settings → Secrets and variables → Actions → Variables. The workflow already
+passes it through; it is expected to stay unset until after launch.
+
+While it is unset, Vite inlines it as `undefined` and Rollup drops the GTM loader from
+`CookieConsent` entirely — the built JS contains no reference to `googletagmanager.com` at all,
+and accepting the banner records the choice and does nothing else. It comes back on the first CI
+build after the variable exists, so **setting the variable requires a rebuild**; re-running the
+last deploy is enough.
+
+To confirm on any build:
+
+```bash
+grep -r googletagmanager dist/    # no match ⇒ no GTM in the bundle
+```
 
 ## Environments
 

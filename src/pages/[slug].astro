@@ -5,6 +5,7 @@ import CottagePage from '../components/pages/CottagePage.astro';
 
 import { houses } from '../data/houses';
 import { getHouseText, useTranslations } from '../i18n';
+import { cottageSchema, houseOgImage, houseOgImageAlt } from '../lib/seo';
 
 export function getStaticPaths() {
     return houses.map((house) => ({ params: { slug: house.slug }, props: { house } }));
@@ -15,6 +16,8 @@ const { house } = Astro.props;
 const locale = 'sv' as const;
 const t = useTranslations(locale);
 const text = getHouseText(locale, house.slug);
+
+const jsonLd = [await cottageSchema(house, locale, Astro.site)];
 ---
 
 <Layout
@@ -22,6 +25,9 @@ const text = getHouseText(locale, house.slug);
     routeKey="cottage"
     param={house.slug}
     title={`${text.name} | ${t.meta.titleSuffix}`}
-    description={text.shortDescription}>
+    description={text.shortDescription}
+    ogImage={await houseOgImage(house)}
+    ogImageAlt={houseOgImageAlt(house, locale)}
+    {jsonLd}>
     <CottagePage {house} {locale} />
 </Layout>

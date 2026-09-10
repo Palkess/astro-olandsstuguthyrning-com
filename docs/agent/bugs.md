@@ -23,7 +23,8 @@ a common reason visitors abandon a rental listing.
 
 ### BUG-003 — Gula stugan's photos are low resolution
 Its entire gallery, including the hero (`patio.jpg`), is 1024×768 phone photography; one image
-is 576×768. Every other cottage is 1920×1280.
+is 576×768. Every other cottage is 1920×1280. Its social card and JSON-LD images are cropped
+from the same file, so they upscale slightly too (`src/lib/seo.ts`).
 **Resolution:** high-resolution replacements will be supplied before launch, so the design
 assumes full-bleed heroes for every cottage. The earlier letterboxed-hero workaround is
 **withdrawn** — do not build it.
@@ -77,6 +78,15 @@ raster wordmark that does not reduce to 16px.
 `/sv/stuga/<id>`, `/en/holiday-home/<id>` and `/de/ferienhaus/<id>`. Every English and German
 visitor was being sent to a 404 on the single link this site exists to deliver. Found in manual
 review; all 15 URLs verified against the built HTML.
+
+### BUG-011 — `@astrojs/sitemap`'s `i18n` option mispaired the translated slugs *(fixed 2026-09-10)*
+The plugin pairs locales by matching the path after the locale prefix, which only works when the
+slug is the same in every language. Cottage slugs are (D17); content-page slugs are not. The
+sitemap therefore told Google that `/kontakt/` had Swedish and German versions and no English
+one, and listed `/en/contact/` with no alternates at all — an asymmetric hreflang cluster, which
+is worse than declaring none. Found while verifying phase 6 output, not by any tool.
+**Fixed by** a `serialize` hook driven by `routeSlugs` (ADR-018). All 27 URLs now carry a
+complete, self-referencing set of three. **Don't** go back to the `i18n` option.
 
 ### `client:visible` on the lightbox never hydrated *(fixed 2026-09-09)*
 `Lightbox.svelte` renders only a closed `<dialog>`. Astro's `client:visible` observes the

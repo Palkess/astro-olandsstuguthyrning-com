@@ -22,9 +22,31 @@ runtime: static HTML + 4 islands + (opt-in) GTM
    name.
 3. `src/lib/images.ts` — `import.meta.glob` over `src/assets/images/houses/**`, returning
    `ImageMetadata` for `astro:assets`. Validates the whole set at module load.
-4. Pages call `getHouseText(locale, slug)` and `getHouseImage(slug, file)` and render.
+4. `src/lib/seo.ts` — reads all three of the above and returns the JSON-LD nodes and the
+   cropped social-card images for a page. Pure functions taking `Astro.site`, so the cutover to
+   the apex domain reaches them without an edit.
+5. Pages call `getHouseText(locale, slug)` and `getHouseImage(slug, file)` and render.
 
 There is no other source of truth. Nothing is fetched.
+
+## What the head carries
+
+`Layout.astro` derives the canonical, the `hreflang` alternates and the staging `noindex` from
+the route rather than accepting them as props, so a page cannot ship metadata that disagrees with
+the URL it is served from. Pages supply only `title`, `description`, `ogImage`/`ogImageAlt` and
+`jsonLd`.
+
+The sitemap's alternates come from the same `routeSlugs` table, via a `serialize` hook in
+`astro.config.mjs` (ADR-018), so the XML and the HTML cannot drift apart.
+
+## The one analytics event
+
+A delegated `click` listener at the bottom of `Layout.astro` pushes `stugknuten_click` (with the
+cottage slug and the page locale) onto `window.dataLayer`. That array only exists after an
+explicit consent accept, so the optional call is also the consent check.
+
+It is a plain script, not a fifth island (ADR-009) — nothing about it renders. The outbound links
+open in a new tab, so the push always completes before the visitor leaves.
 
 ## Routing
 
@@ -88,6 +110,9 @@ components/
 │              YouTubeFacade, CookieConsent
 └─ pages/      HomePage, CottagePage, ContactPage, BirdwatchingPage, PrivacyPage
 ```
+
+Supporting modules in `src/lib/`: `images.ts` (asset resolution, validated at build),
+`format.ts` (locale-aware numbers and dates), `seo.ts` (JSON-LD and social cards).
 
 `components/pages/*` hold the page *bodies*. The files under `src/pages/` are thin route
 wrappers that pick a locale, a body and the `<Layout>` metadata — which is why `/en/` and `/de/`

@@ -3,6 +3,7 @@
 import Layout from '../layouts/Layout.astro';
 import PrivacyPage from '../components/pages/PrivacyPage.astro';
 import { useTranslations } from '../i18n';
+import { siteOgImage, siteOgImageAlt } from '../lib/seo';
 
 const locale = 'sv' as const;
 const t = useTranslations(locale);
@@ -12,6 +13,8 @@ const t = useTranslations(locale);
     {locale}
     routeKey="privacy"
     title={`${t.privacy.heading} | ${t.meta.titleSuffix}`}
-    description={t.meta.privacyDescription}>
+    description={t.meta.privacyDescription}
+    ogImage={await siteOgImage()}
+    ogImageAlt={siteOgImageAlt(locale)}>
     <PrivacyPage {locale} />
 </Layout>

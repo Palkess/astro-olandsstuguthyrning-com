@@ -1,6 +1,6 @@
 # Project plan — olandsstuguthyrning.com rewrite
 
-**Status:** phases 0–5 complete (2026-09-09). Next: phase 6 (SEO, JSON-LD, analytics).
+**Status:** phases 0–6 complete (phase 6: 2026-09-10). Next: phase 7 (verify and owner review).
 **Written:** 2026-09-09
 **Supersedes:** `github.com/Palkess/olandsstuguthyrning-svelte` (SvelteKit 2 + MSSQL + IIS)
 
@@ -278,12 +278,31 @@ Route files are thin; the page bodies live in `src/components/pages/`. English a
 one `[locale]/[slug].astro`, which takes the translated slugs from `routeSlugs` rather than
 repeating them as file names.
 
-### Phase 6 — SEO and analytics
-Per-house `VacationRental` JSON-LD (name, description, images, occupancy/bedrooms from `info`,
-price range, geo) + `LocalBusiness` on home; `@astrojs/sitemap`; `robots.txt`; canonicals;
-`hreflang` for all three locales; per-house `og:image`. GTM behind consent via `PUBLIC_GTM_ID`.
-**One custom event:** a `dataLayer` push on the outbound Stugknuten click — that click is the
-site's only real conversion, and nothing else is worth measuring.
+### Phase 6 — SEO and analytics ✅ *complete 2026-09-10*
+All of it built in `src/lib/seo.ts` and injected through `Layout.astro`, which already owned the
+canonical, the `hreflang` alternates and the staging `noindex`.
+
+- Per-cottage `VacationRental` JSON-LD and a `LodgingBusiness` node on each home page, the
+  cottage pointing at the business rather than repeating it (ADR-016). `LodgingBusiness` is a
+  subtype of the `LocalBusiness` this plan named, so nothing is lost.
+- Occupancy and bedrooms had to become data: `sleeps` and `bedrooms` in `src/data/houses.ts`.
+  The plan said "from `info`", but `info` had already become `amenities` — icon keys only, with
+  the counts living as prose in `amenityLabels` ("6 bäddar"), which is unusable in structured
+  data. `bedrooms` counts proper bedrooms only; sleeping lofts, sofa beds and Vita huset's guest
+  house are in `sleeps` but not in `bedrooms`.
+- The offer on each cottage points at its Stugknuten listing in the visitor's language, priced
+  as a min/max over one week rather than a single figure (ADR-017).
+- Per-cottage `og:image`, cropped to 1200×630 at build time, plus `og:image:alt` matching what
+  the same photo is given on the page. Content pages share the site card.
+- Sitemap alternates rebuilt from `routeSlugs` — `@astrojs/sitemap`'s own `i18n` option cannot
+  pair translated slugs and was emitting asymmetric hreflang clusters (BUG-011, ADR-018).
+- The one custom event: a delegated click listener pushes `stugknuten_click` with the cottage
+  slug and locale. `window.dataLayer` only exists after consent, so the optional call is also
+  the consent check — no consent, nothing sent.
+
+**`PUBLIC_GTM_ID` is deliberately still unset** and will be added as a repository variable after
+launch. Until then Rollup strips the GTM loader out of the bundle entirely, so the staging build
+makes no third-party request under any circumstances. Setting the variable needs a rebuild.
 
 ### Phase 7 — Verify and review
 Full build reviewed on `https://new.olandsstuguthyrning.com` by Jonas, then by Helen and Lars.
@@ -354,7 +373,7 @@ until Phase 9, so rollback is a DNS change and nothing more.
 | Item | Who | Blocking? |
 |---|---|---|
 | Registrar / DNS provider access | Owners or Jonas | **Phase 0** — now needed for the staging CNAME too |
-| GTM container access for `GTM-M436Z79H` | Jonas | Phase 6 |
+| GTM container access for `GTM-M436Z79H` | Jonas | No — `PUBLIC_GTM_ID` is set after launch |
 | New Gula stugan photos | Owners | No — fallback in §5.4 |
 | Confirm 2026 prices and fee amounts | Owners | No (D19) — but ask at Phase 7 review |
 | Is the 2021 bird list current? | Owners | No |

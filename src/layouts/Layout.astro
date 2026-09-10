@@ -15,6 +15,7 @@ import CookieConsent from '../components/organisms/CookieConsent.svelte';
 
 import { alternateLinks, routeHref, useTranslations } from '../i18n';
 import { defaultLocale, type Locale, type RouteKey } from '../i18n/routes';
+import { OG_IMAGE_SIZE, type JsonLd } from '../lib/seo';
 
 interface Props {
     locale?: Locale;
@@ -25,9 +26,22 @@ interface Props {
     description?: string;
     /** Absolute-ready OG image path, if the page has one. */
     ogImage?: string;
+    /** Alt text for `ogImage`. Ignored when there is no image. */
+    ogImageAlt?: string;
+    /** JSON-LD nodes for this page, built in `src/lib/seo.ts`. */
+    jsonLd?: JsonLd[];
 }
 
-const { locale = defaultLocale, routeKey, param, title, description, ogImage } = Astro.props;
+const {
+    locale = defaultLocale,
+    routeKey,
+    param,
+    title,
+    description,
+    ogImage,
+    ogImageAlt,
+    jsonLd = []
+} = Astro.props;
 
 const t = useTranslations(locale);
 
@@ -40,6 +54,17 @@ const alternates = alternateLinks(routeKey, param);
  * same Swedish queries. Flips automatically when `site` changes at cutover.
  */
 const isStaging = Astro.site?.hostname !== 'olandsstuguthyrning.com';
+
+/**
+ * JSON-LD has to be injected as raw text, so it is the one place on the site
+ * where `set:html` is correct rather than an anti-pattern (conventions.md). The
+ * escape is what makes it safe: a `</script>` sequence inside a cottage
+ * description would otherwise close the block early and spill the rest of the
+ * JSON into the document as markup.
+ */
+function serialize(node: JsonLd): string {
+    return JSON.stringify(node).replace(/</g, '\\u003c');
+}
 ---
 
 <!doctype html>
@@ -69,7 +94,16 @@ const isStaging = Astro.site?.hostname !== 'olandsstuguthyrning.com';
         <meta property="og:title" content={title} />
         {description && <meta property="og:description" content={description} />}
         <meta property="og:url" content={canonical.href} />
-        {ogImage && <meta property="og:image" content={new URL(ogImage, Astro.site).href} />}
+        {
+            ogImage && (
+                <>
+                    <meta property="og:image" content={new URL(ogImage, Astro.site).href} />
+                    <meta property="og:image:width" content={String(OG_IMAGE_SIZE.width)} />
+                    <meta property="og:image:height" content={String(OG_IMAGE_SIZE.height)} />
+                    {ogImageAlt && <meta property="og:image:alt" content={ogImageAlt} />}
+                </>
+            )
+        }
         <meta name="twitter:card" content="summary_large_image" />
 
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -89,6 +123,12 @@ const isStaging = Astro.site?.hostname !== 'olandsstuguthyrning.com';
             type="font/woff2"
             crossorigin
         />
+
+        {
+            jsonLd.map((node) => (
+                <script type="application/ld+json" is:inline set:html={serialize(node)} />
+            ))
+        }
 
         <slot name="head" />
     </head>
@@ -118,5 +158,30 @@ const isStaging = Astro.site?.hostname !== 'olandsstuguthyrning.com';
             readMore={t.cookies.readMore}
             privacyHref={routeHref(locale, 'privacy')}
         />
+
+        <script>
+            /*
+             * The one custom analytics event on the site (plan §6). Clicking
+             * through to Stugknuten is the only conversion this brochure has, so
+             * it is the only thing worth measuring — page views cover the rest.
+             *
+             * `window.dataLayer` is created by CookieConsent.svelte and only
+             * after an explicit accept, so the optional call is also the consent
+             * check: no consent, no array, no push, nothing sent anywhere. It is
+             * a delegated listener rather than a fifth island (ADR-009) because
+             * nothing here needs to render.
+             */
+            document.addEventListener('click', (event) => {
+                const target = event.target as HTMLElement | null;
+                const link = target?.closest<HTMLAnchorElement>('a[data-outbound="stugknuten"]');
+                if (!link) return;
+
+                window.dataLayer?.push({
+                    event: 'stugknuten_click',
+                    cottage: link.dataset.cottage,
+                    locale: document.documentElement.lang
+                });
+            });
+        </script>
     </body>
 </html>

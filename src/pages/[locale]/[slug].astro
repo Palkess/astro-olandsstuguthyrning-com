@@ -16,6 +16,14 @@ import PrivacyPage from '../../components/pages/PrivacyPage.astro';
 import { houses, type House } from '../../data/houses';
 import { locales, routeSlugs, type Locale, type RouteKey } from '../../i18n/routes';
 import { getHouseText, useTranslations } from '../../i18n';
+import {
+    businessSchema,
+    cottageSchema,
+    houseOgImage,
+    houseOgImageAlt,
+    siteOgImage,
+    siteOgImageAlt
+} from '../../lib/seo';
 
 export function getStaticPaths() {
     /*
@@ -57,6 +65,21 @@ const meta = {
     contact: { title: t.contact.heading, description: t.meta.contactDescription },
     home: { title: t.meta.homeTitle, description: t.meta.homeDescription }
 }[routeKey] ?? { title: t.meta.homeTitle, description: t.meta.homeDescription };
+
+/*
+ * Cottage pages get their own photo and their own `VacationRental` node; the
+ * content pages share the site card and carry no structured data of their own.
+ * The `LodgingBusiness` node stays on the home page only, so there is one
+ * canonical description of the business per locale rather than four.
+ */
+const ogImage = house ? await houseOgImage(house) : await siteOgImage();
+const ogImageAlt = house ? houseOgImageAlt(house, locale) : siteOgImageAlt(locale);
+
+const jsonLd = house
+    ? [await cottageSchema(house, locale, Astro.site)]
+    : routeKey === 'home'
+      ? [await businessSchema(locale, Astro.site)]
+      : [];
 ---
 
 <Layout
@@ -64,7 +87,10 @@ const meta = {
     {routeKey}
     param={house?.slug}
     title={`${meta.title} | ${t.meta.titleSuffix}`}
-    description={meta.description}>
+    description={meta.description}
+    {ogImage}
+    {ogImageAlt}
+    {jsonLd}>
     {routeKey === 'cottage' && house && <CottagePage {house} {locale} />}
     {routeKey === 'contact' && <ContactPage {locale} />}
     {routeKey === 'birdwatching' && <BirdwatchingPage {locale} />}

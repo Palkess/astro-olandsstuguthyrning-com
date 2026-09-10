@@ -49,6 +49,17 @@ Multi-paragraph copy is `string[]`, one entry per paragraph, rendered as `<p>` e
 site stored `\n` escapes and rendered them via `{@html …replace(…)}` — do not reintroduce that
 pattern. **No `set:html` on content that came from the data files.**
 
+## Structured data
+
+JSON-LD lives in `src/lib/seo.ts` and is passed to `<Layout jsonLd={…}>`, never written inline in
+a page. Two rules:
+
+- **Assert only what the content already says.** Numbers come from `src/data/`, prose from
+  `src/i18n/`. A recommended field with no source is left out — see ADR-016.
+- **`set:html` is correct here and nowhere else.** `Layout.astro` serializes each node with a
+  `<` → `\u003c` escape; without it a `</script>` inside a cottage description would close the
+  block early. This is the single exception to the rule below.
+
 ## Interpolation
 
 Strings with placeholders use `{name}` and go through `interpolate()`. Don't concatenate
@@ -83,7 +94,7 @@ Two custom pieces worth knowing:
 ## Anti-patterns
 
 - Hand-written internal paths (breaks the cutover)
-- `set:html` / `@html` on data-file content
+- `set:html` / `@html` on data-file content (the escaped JSON-LD in `Layout.astro` excepted)
 - A Swedish string outside `src/i18n/`
 - Adding an island for something CSS can do
 - Changing `roda-stugan`'s slug to match its name (breaks inbound links — see context.md)

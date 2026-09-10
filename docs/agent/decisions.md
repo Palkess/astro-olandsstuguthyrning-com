@@ -127,6 +127,43 @@ the outbound click that is the entire point of the site. Verified against the li
 **Consequence:** adding a locale means adding its Stugknuten segment, not just its prefix. The
 mapping is a `const` beside the function so the two can't drift.
 
+## ADR-016 — `LodgingBusiness` and `VacationRental`, not bare `LocalBusiness`
+**Decision:** The home page carries a `LodgingBusiness` node; each cottage page carries a
+`VacationRental` node pointing back at it with `parentOrganization`. Both are built in
+`src/lib/seo.ts` and injected by `Layout.astro`.
+**Why:** The plan said "LocalBusiness". `LodgingBusiness` is a subtype of it, so nothing that
+understands `LocalBusiness` loses anything, and it says what the business actually is.
+`VacationRental` is in turn a `LodgingBusiness`, which is why a cottage can point at the
+business node instead of repeating its address, phones and geo five times per locale.
+**Consequence:** occupancy and bedroom counts had to become data (`sleeps` / `bedrooms` in
+`src/data/houses.ts`) — they previously existed only as prose in `amenityLabels` ("6 bäddar"),
+which is unusable in structured data and differs per locale.
+**Don't:** invent a value to fill a recommended field. Bathroom counts, check-in times and
+ratings are all absent because the content does not state them, and a machine-read guess is
+never proofread by anyone.
+
+## ADR-017 — The offer in a cottage's JSON-LD points at Stugknuten
+**Decision:** `offers.url` on each `VacationRental` is that cottage's Stugknuten listing, in the
+visitor's language, not the page it appears on. The price is a min/max `UnitPriceSpecification`
+over a one-week reference quantity, not a single `price`.
+**Why:** This site never takes a booking (ADR-001). An offer whose URL leads to a page with no
+way to accept it is a lie told to a machine. And both price tiers are real, so a single figure
+would be wrong for half the year.
+
+## ADR-018 — Sitemap alternates are built from `routeSlugs`, not by `@astrojs/sitemap`
+**Decision:** `astro.config.mjs` passes a `serialize` hook that derives each URL's `hreflang`
+links from `alternatePaths()` in `src/i18n/routes.ts`. The plugin's own `i18n` option is not
+used.
+**Why:** That option pairs locales by matching the path *after* the locale prefix. Cottage slugs
+are identical in every language so they paired fine; every content page has a translated slug
+(D17) and did not. The result was not merely incomplete but wrong: `/kontakt/` advertised
+Swedish and German alternates and no English one, while `/en/contact/` was left with none at
+all. Asymmetric hreflang annotations are a documented way to have the whole cluster ignored.
+**Consequence:** `src/i18n/routes.ts` gained `localePath()` / `matchRoute()` / `alternatePaths()`
+— pure functions with no imports, which is what makes the file safe to read from the config,
+where `astro:i18n` does not yet exist. `routeHref()` remains what pages use; the two must keep
+emitting the same paths, trailing slash included.
+
 ## How to contribute to this file
 Add an ADR when you add or replace a library, make a non-obvious architectural choice, or
 reverse a previous decision. Record the rationale, not just the outcome.

@@ -3,6 +3,7 @@
 import Layout from '../layouts/Layout.astro';
 import ContactPage from '../components/pages/ContactPage.astro';
 import { useTranslations } from '../i18n';
+import { siteOgImage, siteOgImageAlt } from '../lib/seo';
 
 const locale = 'sv' as const;
 const t = useTranslations(locale);
@@ -12,6 +13,8 @@ const t = useTranslations(locale);
     {locale}
     routeKey="contact"
     title={`${t.contact.heading} | ${t.meta.titleSuffix}`}
-    description={t.meta.contactDescription}>
+    description={t.meta.contactDescription}
+    ogImage={await siteOgImage()}
+    ogImageAlt={siteOgImageAlt(locale)}>
     <ContactPage {locale} />
 </Layout>

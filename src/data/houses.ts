@@ -29,6 +29,19 @@ export interface House {
     pricePerWeekLowSeason: number;
     pricePerWeekHighSeason: number;
     amenities: AmenityIcon[];
+    /**
+     * Total sleeping places, including sofa beds, sleeping lofts and — for Vita
+     * huset — the guest house. Matches the `bed` amenity label in every locale
+     * ("6 bäddar", "6 + 2 bäddar"), which is prose and therefore unusable in
+     * JSON-LD. Read as `occupancy` by the structured data (src/lib/seo.ts).
+     */
+    sleeps: number;
+    /**
+     * Proper bedrooms only. Sleeping lofts, sofa beds and Vita huset's separate
+     * guest house are counted in `sleeps` but not here, because calling a loft a
+     * bedroom in structured data overstates the cottage to a search engine.
+     */
+    bedrooms: number;
     /** Ids resolved to localized description/price in `src/i18n/houses.*.ts`. */
     extraCostIds: string[];
     /**
@@ -60,6 +73,8 @@ export const houses: House[] = [
         pricePerWeekLowSeason: 5000,
         pricePerWeekHighSeason: 8000,
         amenities: ['bed', 'kitchen', 'shower', 'swimming'],
+        sleeps: 6,
+        bedrooms: 2,
         extraCostIds: [],
         stugknutenId: '13541'
     },
@@ -88,6 +103,8 @@ export const houses: House[] = [
         pricePerWeekLowSeason: 5000,
         pricePerWeekHighSeason: 8000,
         amenities: ['bed', 'kitchen', 'shower', 'swimming'],
+        sleeps: 8,
+        bedrooms: 3,
         extraCostIds: ['guest-house-beds'],
         stugknutenId: '14199'
     },
@@ -111,6 +128,8 @@ export const houses: House[] = [
         pricePerWeekLowSeason: 5000,
         pricePerWeekHighSeason: 7000,
         amenities: ['bed', 'kitchen', 'shower', 'swimming'],
+        sleeps: 4,
+        bedrooms: 2,
         extraCostIds: [],
         stugknutenId: '1692'
     },
@@ -132,6 +151,8 @@ export const houses: House[] = [
         pricePerWeekLowSeason: 5000,
         pricePerWeekHighSeason: 7000,
         amenities: ['bed', 'kitchen', 'shower', 'swimming'],
+        sleeps: 4,
+        bedrooms: 1,
         extraCostIds: [],
         stugknutenId: '20992'
     },
@@ -151,6 +172,8 @@ export const houses: House[] = [
         pricePerWeekLowSeason: 5000,
         pricePerWeekHighSeason: 8000,
         amenities: ['bed', 'kitchen', 'shower', 'swimming'],
+        sleeps: 6,
+        bedrooms: 2,
         extraCostIds: [],
         stugknutenId: '9125'
     }

@@ -3,6 +3,7 @@
 import Layout from '../layouts/Layout.astro';
 import BirdwatchingPage from '../components/pages/BirdwatchingPage.astro';
 import { useTranslations } from '../i18n';
+import { siteOgImage, siteOgImageAlt } from '../lib/seo';
 
 const locale = 'sv' as const;
 const t = useTranslations(locale);
@@ -12,6 +13,8 @@ const t = useTranslations(locale);
     {locale}
     routeKey="birdwatching"
     title={`${t.birdwatching.heading} | ${t.meta.titleSuffix}`}
-    description={t.meta.birdwatchingDescription}>
+    description={t.meta.birdwatchingDescription}
+    ogImage={await siteOgImage()}
+    ogImageAlt={siteOgImageAlt(locale)}>
     <BirdwatchingPage {locale} />
 </Layout>

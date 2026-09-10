@@ -41,3 +41,59 @@ export const routeSlugs: Record<RouteKey, Record<Locale, string>> = {
 export function isLocale(value: string | undefined): value is Locale {
     return locales.includes(value as Locale);
 }
+
+/**
+ * Path for a route, built without `astro:i18n`.
+ *
+ * `routeHref()` in `./index.ts` is what pages use and stays the canonical
+ * helper — it goes through `getRelativeLocaleUrl`, so it would also apply a
+ * `base` if one were ever added (ADR-011). This twin exists because
+ * `astro.config.mjs` needs the same paths while building the sitemap, and the
+ * config is evaluated before `astro:i18n` exists. Keep the two in agreement:
+ * both emit a trailing slash, matching what the build writes to disk.
+ */
+export function localePath(locale: Locale, key: RouteKey, param?: string): string {
+    const prefix = locale === defaultLocale ? '' : `/${locale}`;
+    const path = [routeSlugs[key][locale], param].filter(Boolean).join('/');
+    return path ? `${prefix}/${path}/` : `${prefix}/`;
+}
+
+/**
+ * The reverse: which route a built URL path belongs to, so the sitemap can pair
+ * `/fagelskadning/` with `/en/birdwatching/`. Returns `null` for anything not
+ * produced by this site's routing table.
+ */
+export function matchRoute(pathname: string): { key: RouteKey; param?: string } | null {
+    const segments = pathname.split('/').filter(Boolean);
+    const [first, ...rest] = segments;
+
+    const locale = isLocale(first) ? first : defaultLocale;
+    const tail = isLocale(first) ? rest : segments;
+
+    if (tail.length === 0) return { key: 'home' };
+    if (tail.length > 1) return null;
+
+    const [segment] = tail;
+
+    for (const key of ['birdwatching', 'privacy', 'contact'] as const) {
+        if (routeSlugs[key][locale] === segment) return { key };
+    }
+
+    /* Cottage slugs are identical in every locale, so anything left is one. */
+    return { key: 'cottage', param: segment };
+}
+
+/**
+ * Every localized URL for the page at `pathname`, as `hreflang` → path. Used by
+ * the sitemap's `serialize` hook; the pages build their own from
+ * `alternateLinks()`.
+ */
+export function alternatePaths(pathname: string): { lang: string; path: string }[] {
+    const route = matchRoute(pathname);
+    if (!route) return [];
+
+    return locales.map((locale) => ({
+        lang: localeTags[locale],
+        path: localePath(locale, route.key, route.param)
+    }));
+}
