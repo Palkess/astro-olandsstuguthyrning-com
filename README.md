@@ -13,6 +13,7 @@ Replaces the SvelteKit + MSSQL + IIS site at
 - 📋 [Project plan](docs/project-plan.md) — decisions, phases, cutover runbook
 - 🌐 Staging: https://new.olandsstuguthyrning.com (noindexed)
 - 🎯 Live (after cutover): https://olandsstuguthyrning.com
+- 🎨 Design artifacts: https://claude.ai/code/artifact/b11c4586-acd9-422f-b4d8-f4228ccf5e92
 
 ## Built with
 
