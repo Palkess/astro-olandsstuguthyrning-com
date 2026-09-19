@@ -97,6 +97,17 @@ height, so the row takes its height from the panel and the photo fills it. **Don
 photo `h-full` in normal flow instead: the grid then sizes the row from the image's aspect ratio,
 and the hero grows with the viewport width.
 
+### BUG-013 — Muted text failed contrast on tinted grounds; a link relied on colour *(fixed 2026-09-19)*
+Found by an axe WCAG 2.2 AA run over all 27 pages. `text-muted` cleared 4.5:1 on `surface` but
+not on the tinted grounds — `surface-sunken` (the footer, so every page failed), `accent-soft`
+and `timber-soft`. axe only saw the footer and the contact band; the header dropdown's current
+cottage and the map labels failed too but were hidden or in SVG, and turned up only by checking
+every token pairing by hand. Separately, the privacy link in the cookie banner differed from its
+sentence by colour alone (1.4.1).
+**Fixed by** darkening the `text-muted` token and underlining the link.
+**Don't** check a new text colour against `surface` alone — the ink comment in
+`src/styles/global.css` states the rule: every ground, the tinted ones included.
+
 ### `client:visible` on the lightbox never hydrated *(fixed 2026-09-09)*
 `Lightbox.svelte` renders only a closed `<dialog>`. Astro's `client:visible` observes the
 island's children, a `display: none` element never intersects, so the island never hydrated and
