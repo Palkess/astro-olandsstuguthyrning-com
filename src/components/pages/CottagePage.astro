@@ -50,7 +50,9 @@ const seeAllImages = interpolate(t.house.seeAllImages, { count: house.images.len
         sizes="(min-width: 1100px) 68vw, 100vw"
         loading="eager"
         fetchpriority="high"
-        class="aspect-3/2 w-full object-cover sm:aspect-[21/9] lg:aspect-auto lg:h-[560px]"
+        pictureAttributes={{ class: 'lg:relative lg:min-h-[560px]' }}
+        class="aspect-3/2 w-full object-cover sm:aspect-[21/9] lg:absolute lg:inset-0 lg:aspect-auto
+            lg:h-full"
     />
 
     <div class="bg-card flex flex-col px-5 py-8 lg:px-11 lg:py-11">
