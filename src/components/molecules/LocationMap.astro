@@ -1,82 +1,57 @@
 ---
 /**
- * A schematic orientation map: where Öland is, and where Löt sits on it.
+ * An orientation map: where Öland is, and where Löt sits on it.
  *
- * Hand-drawn inline SVG rather than a map embed, deliberately (ADR-014). An
- * embedded Google or Mapbox map is a third-party request on page load, on the
- * one page whose neighbour is a privacy policy promising that we make none —
- * and a raster tile export would still be someone else's copyrighted image.
- * Inline SVG costs no request, scales, and inherits the design tokens.
+ * A static raster extract, replacing the hand-drawn schematic SVG that stood
+ * here before — ADR-019 reverses ADR-014. It is an *image*, not an embed: no
+ * tile server is contacted at runtime, so the contact page still makes no
+ * third-party request before consent, which is what the privacy policy on the
+ * page next to it promises. Do not "upgrade" this to Leaflet or a Google embed
+ * to get pan and zoom; that trade was declined twice.
  *
- * It is a *diagram*, not a survey map: the coastline is simplified and there is
- * no scale bar, because at whole-island zoom the 2 / 10 / 15 km distances in
- * the panel beside it are all the same dot. The caption says as much. If a real
- * cartographic asset ever arrives, replace the paths — the component's whole
- * API is `alt`.
+ * The extract is OpenStreetMap data, which is ODbL. The credit under the image
+ * is a licence condition, not decoration — it must stay visible, and it lives
+ * in this component rather than in the caller's caption row so that the two
+ * cannot drift apart if the tile is ever rearranged or reused.
  *
- * Colours come from Tailwind's `fill-*` / `stroke-*` token utilities rather
- * than `fill="var(…)"` presentation attributes, which browsers do not reliably
- * substitute. Geometry — `font-size`, `stroke-width`, `r` — stays as numeric
- * attributes so it scales with the viewBox instead of being frozen in px.
- *
- * Every label is a proper noun spelt the same in sv/en/de, so nothing inside
- * the drawing needs translating; only the accessible description does.
+ * The image is full-bleed inside its card: no border or radius of its own, so
+ * the card's `overflow-hidden` clips the top corners. `sizes` therefore tracks
+ * the *card* width — one of the two contact-page grid columns above `lg`, the
+ * full container below it. Change that grid and this hint has to follow, or the
+ * browser picks a candidate too small and the map's place names go soft.
  */
+import { Picture } from 'astro:assets';
+
+import mapImage from '../../assets/images/location-map-oland.jpg';
+import { useTranslations, type Locale } from '../../i18n';
+
 interface Props {
-    /** Accessible description of the map. */
-    alt: string;
+    locale: Locale;
     class?: string;
 }
 
-const { alt, class: className } = Astro.props;
+const { locale, class: className } = Astro.props;
+
+const t = useTranslations(locale);
 ---
 
-<svg
-    viewBox="0 0 400 460"
-    role="img"
-    aria-label={alt}
-    fill="none"
-    class:list={['font-sans block h-auto w-full', className]}>
-    <rect width="400" height="460" class="fill-accent-soft"></rect>
-
-    {/* Småland — the mainland coast, running off three edges. */}
-    <path
-        d="M0 460 L48 460 L80 389 L118 318 L131 279 L144 212 L157 159 L163 106 L182 35 L192 0 L0 0 Z"
-        stroke-width="1.5"
-        stroke-linejoin="round"
-        class="fill-surface-sunken stroke-border-strong">
-    </path>
-
-    {/* Öland. */}
-    <path
-        d="M358 28 L368 71 L362 106 L330 152 L304 188 L282 230 L266 272 L240 318 L208 364 L170 414
-           L144 442 L138 414 L144 372 L150 329 L157 294 L163 265 L182 230 L208 209 L227 195
-           L246 166 L272 131 L304 96 L336 53 Z"
-        stroke-width="1.5"
-        stroke-linejoin="round"
-        class="fill-timber-soft stroke-border-strong">
-    </path>
-
-    {/* Ölandsbron, Kalmar → Färjestaden. */}
-    <path d="M133 278 L163 282" stroke-width="2.5" class="stroke-border-strong"></path>
-
-    <g font-size="17" class="fill-text-muted font-medium">
-        <text transform="translate(192 340) rotate(-62.6)" text-anchor="middle">Öland</text>
-        <text transform="translate(228 124) rotate(-62.6)" text-anchor="middle">Kalmarsund</text>
-    </g>
-
-    {/* Kalmar and Borgholm: context, not destinations. */}
-    <g font-size="15" class="fill-text-body">
-        <circle cx="133" cy="278" r="4" class="fill-text-muted"></circle>
-        <text x="123" y="283" text-anchor="end">Kalmar</text>
-
-        <circle cx="226" cy="202" r="4" class="fill-text-muted"></circle>
-        <text x="216" y="207" text-anchor="end">Borgholm</text>
-    </g>
-
-    {/* Löt. */}
-    <circle cx="261" cy="183" r="13" opacity="0.25" class="fill-accent"></circle>
-    <circle cx="261" cy="183" r="6" stroke-width="2" class="fill-accent stroke-accent-contrast">
-    </circle>
-    <text x="279" y="189" font-size="19" class="fill-text-heading font-semibold">Löt</text>
-</svg>
+<figure class:list={['m-0', className]}>
+    <Picture
+        src={mapImage}
+        alt={t.contact.mapAlt}
+        formats={['avif', 'webp']}
+        widths={[400, 700, 1104]}
+        sizes="(min-width: 1024px) 41rem, calc(100vw - 2.5rem)"
+        loading="lazy"
+        class="block h-auto w-full"
+    />
+    <figcaption class="text-text-muted px-5 pt-2.5 pb-3 text-label">
+        <a
+            href="https://www.openstreetmap.org/copyright"
+            target="_blank"
+            rel="noopener"
+            class="text-text-muted underline">
+            {t.contact.mapAttribution}
+        </a>
+    </figcaption>
+</figure>

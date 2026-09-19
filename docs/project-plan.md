@@ -256,11 +256,6 @@ the work of link, button and focus ring, timber as a quiet second accent for ico
 Newsreader for headings, Public Sans for everything else. Tokens are in `src/styles/global.css`
 (ADR-012).
 
-One thing in the artboards was deliberately **not** built: a per-amenity secondary detail line,
-which would have meant inventing copy in three languages for content that doesn't exist. The
-contact page's map tile *is* built, as a hand-drawn schematic SVG rather than an embed
-(ADR-014).
-
 ### Phase 4 — Components ✅ *complete 2026-09-09*
 Atoms/molecules/organisms per `docs/agent/architecture.md`. Four islands, no more (D10):
 `Header.svelte` (`client:load`, dropdown + mobile menu + language switcher), `CookieConsent.svelte`

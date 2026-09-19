@@ -4,10 +4,9 @@
  * — both numbers lived inside commented-out markup — so this page and the
  * footer together are the fix for the biggest content bug found (plan D2).
  *
- * The design's map tile is a hand-drawn schematic SVG (`LocationMap.astro`),
- * not an embed: a Google or Mapbox map would be a third-party request before
- * consent, on the page whose neighbour is a privacy policy promising we make
- * none. The distances panel beside it carries the actual numbers.
+ * The map tile is a static image (`LocationMap.astro`), not an embed: a Google
+ * or Mapbox map would be a third-party request before consent, on the page
+ * whose neighbour is a privacy policy promising we make none.
  */
 import InfoCard from '../molecules/InfoCard.astro';
 import LocationMap from '../molecules/LocationMap.astro';
@@ -20,12 +19,6 @@ interface Props {
 
 const { locale } = Astro.props;
 const t = useTranslations(locale);
-
-const distances = [
-    { label: t.contact.distanceKopingsvik, km: site.location.distancesKm.kopingsvik },
-    { label: t.contact.distanceBorgholm, km: site.location.distancesKm.borgholm },
-    { label: t.contact.distanceBeach, km: site.location.distancesKm.beach }
-];
 ---
 
 <div class="mx-auto max-w-360 px-5 py-12 lg:px-12 lg:py-18">
@@ -35,8 +28,22 @@ const distances = [
     </div>
 
     <div class="mt-9 grid gap-5 lg:grid-cols-2">
+        {
+            /*
+             * `lg:flex-auto` on each card, not `flex-1`: above `lg` the map sets the
+             * row height, and these three share whatever it leaves over so the column
+             * ends flush with it instead of stopping short. Tailwind's `flex-1` is
+             * `flex: 1 1 0%`, which would throw the content heights away and cut the
+             * column into equal thirds — the one-line email card would end up as tall
+             * as the two-number phone card. `flex-auto` keeps each card's own height
+             * as the basis and only shares out the surplus.
+             *
+             * It is a no-op when the left column is the taller of the two, and below
+             * `lg` each column is its own grid row, so there is no surplus to share.
+             */
+        }
         <div class="flex min-w-0 flex-col gap-5">
-            <InfoCard label={t.contact.phoneHeading}>
+            <InfoCard label={t.contact.phoneHeading} class="lg:flex-auto">
                 <ul class="m-0 flex list-none flex-col gap-3 p-0">
                     {
                         site.phones.map((phone) => (
@@ -57,7 +64,7 @@ const distances = [
                 <p class="text-text-muted mt-4 mb-0 text-small">{t.contact.languagesNote}</p>
             </InfoCard>
 
-            <InfoCard label={t.contact.emailHeading}>
+            <InfoCard label={t.contact.emailHeading} class="lg:flex-auto">
                 {
                     /*
                      * `wrap-anywhere`, not `break-words`: `overflow-wrap: break-word`
@@ -75,7 +82,7 @@ const distances = [
                 </a>
             </InfoCard>
 
-            <InfoCard label={t.contact.addressHeading}>
+            <InfoCard label={t.contact.addressHeading} class="lg:flex-auto">
                 <address class="not-italic">
                     {site.name}<br />
                     {site.owners.join(' & ')}<br />
@@ -91,54 +98,17 @@ const distances = [
             <div class="border-border bg-card rounded-card overflow-hidden border">
                 {
                     /*
-                     * Capped rather than full-bleed: the drawing is 400×460, so at
-                     * the full width of a 1440px column it would render 770px tall
-                     * and dominate a page whose actual content is a phone number.
+                     * Full-bleed: the map spans the card, and the card's
+                     * `overflow-hidden` clips its top corners. `LocationMap`'s
+                     * `sizes` hint is written against this column's width — if the
+                     * grid below changes, that hint changes with it.
                      */
                 }
-                <div class="p-5 pb-2">
-                    <LocationMap alt={t.contact.mapAlt} class="mx-auto max-w-80" />
-                </div>
+                <LocationMap locale={locale} />
                 <p class="border-border text-text-muted m-0 border-t px-5 py-3.5 text-small">
                     {t.contact.mapCaption}
                 </p>
             </div>
-
-            <InfoCard>
-                <h2 class="font-serif text-h3 mt-0 mb-3.5 font-normal">
-                    {t.contact.distancesHeading}
-                </h2>
-                <dl class="m-0">
-                    {
-                        distances.map((distance, index) => (
-                            <div
-                                class:list={[
-                                    'border-border flex justify-between gap-4 py-2.5',
-                                    index > 0 && 'border-t'
-                                ]}>
-                                <dt class="m-0">{distance.label}</dt>
-                                <dd class="text-text-muted m-0 whitespace-nowrap">
-                                    {interpolate(t.contact.distanceUnit, { km: distance.km })}
-                                </dd>
-                            </div>
-                        ))
-                    }
-                </dl>
-            </InfoCard>
-
-            <InfoCard>
-                <h2 class="font-serif text-h3 mt-0 mb-3.5 font-normal">
-                    {t.contact.bookingHeading}
-                </h2>
-                <p class="m-0">{t.contact.bookingBody}</p>
-            </InfoCard>
-
-            <InfoCard>
-                <h2 class="font-serif text-h3 mt-0 mb-3.5 font-normal">
-                    {t.contact.locationHeading}
-                </h2>
-                <p class="m-0">{t.contact.locationBody}</p>
-            </InfoCard>
         </div>
     </div>
 </div>

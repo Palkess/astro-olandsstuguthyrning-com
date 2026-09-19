@@ -88,23 +88,13 @@ export const uiEn: UiStrings = {
         intro: 'Do get in touch if you have questions about the cottages, the area or your stay. Call or email — we answer as soon as we can.',
         phoneHeading: 'Telephone',
         emailHeading: 'Email',
-        bookingHeading: 'Booking',
-        bookingBody:
-            'The booking itself and current availability are handled through Stugknuten. Each cottage page links to the right listing.',
-        locationHeading: 'Where are the cottages?',
-        locationBody:
-            'All the cottages are in Löt on eastern Öland, about 10 km from Köpingsvik and 15 km from Borgholm. Directions are provided when you book.',
         callName: 'Call {name}',
         languagesNote: 'We answer in Swedish and English.',
         addressHeading: 'Address',
         directionsNote: 'Exact directions to your cottage are provided when you book.',
-        distancesHeading: 'How to find us',
-        distanceUnit: '{km} km',
-        distanceKopingsvik: 'Köpingsvik',
-        distanceBorgholm: 'Borgholm',
-        distanceBeach: 'Nearest beach',
-        mapAlt: 'Map of Öland with Löt marked on the central part of the island, east of Borgholm.',
-        mapCaption: 'Schematic map. Löt is on central Öland, north-east of Borgholm.'
+        mapAlt: 'Map of Öland and Kalmarsund with Löt marked on the central part of the island, north-east of Borgholm.',
+        mapCaption: 'Löt is on central Öland, north-east of Borgholm.',
+        mapAttribution: '© OpenStreetMap'
     },
 
     birdwatching: {

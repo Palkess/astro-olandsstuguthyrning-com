@@ -93,24 +93,14 @@ export const uiDe: UiStrings = {
         intro: 'Melden Sie sich gerne bei Fragen zu den Häusern, zur Umgebung oder zu Ihrem Aufenthalt. Sie erreichen uns telefonisch oder per E-Mail. Wir antworten so schnell wie möglich.',
         phoneHeading: 'Telefon',
         emailHeading: 'E-Mail',
-        bookingHeading: 'Buchung',
-        bookingBody:
-            'Die Buchung selbst und die aktuelle Verfügbarkeit laufen über Stugknuten. Auf jeder Hausseite finden Sie den Link zum richtigen Inserat.',
-        locationHeading: 'Wo liegen die Häuser?',
-        locationBody:
-            'Alle Häuser liegen in Löt im Osten von Öland, ca. 10 km von Köpingsvik und 15 km von Borgholm. Die Anfahrtsbeschreibung erhalten Sie bei der Buchung.',
         callName: '{name} anrufen',
         languagesNote:
             'Wir sprechen Schwedisch und Englisch, leider kein Deutsch. Bitte wenden Sie sich auf Englisch an uns.',
         addressHeading: 'Adresse',
         directionsNote: 'Die genaue Anfahrt zu Ihrem Haus erhalten Sie bei der Buchung.',
-        distancesHeading: 'So finden Sie uns',
-        distanceUnit: '{km} km',
-        distanceKopingsvik: 'Köpingsvik',
-        distanceBorgholm: 'Borgholm',
-        distanceBeach: 'Nächster Badestrand',
-        mapAlt: 'Karte von Öland mit Löt im mittleren Teil der Insel, östlich von Borgholm.',
-        mapCaption: 'Schematische Karte. Löt liegt auf Mittelöland, nordöstlich von Borgholm.'
+        mapAlt: 'Karte von Öland und dem Kalmarsund mit Löt im mittleren Teil der Insel, nordöstlich von Borgholm.',
+        mapCaption: 'Löt liegt auf Mittelöland, nordöstlich von Borgholm.',
+        mapAttribution: '© OpenStreetMap'
     },
 
     birdwatching: {

@@ -117,7 +117,8 @@ the same dot — the caption says "schematic" in all three locales so nobody nav
 labels are proper nouns spelt identically in sv/en/de, so only the `alt` text is translated.
 **Supersedes:** the original "no map at all" decision, which was made because no asset existed.
 Drawing one turned out to be cheaper than sourcing one.
-**Don't:** reach for a tile provider the next time a map is wanted. Extend the SVG.
+**Reversed by ADR-019** — an OpenStreetMap extract was sourced after all. The half of this ADR
+that still stands is the ban on *embeds*; only the "no raster export" half was reversed.
 
 ## ADR-015 — Stugknuten's path segment is translated, not just its locale prefix
 **Decision:** `stugknutenUrl()` maps each locale to both a prefix and a path segment:
@@ -163,6 +164,28 @@ all. Asymmetric hreflang annotations are a documented way to have the whole clus
 — pure functions with no imports, which is what makes the file safe to read from the config,
 where `astro:i18n` does not yet exist. `routeHref()` remains what pages use; the two must keep
 emitting the same paths, trailing slash included.
+
+## ADR-019 — The contact map is a static OpenStreetMap extract, still never an embed
+**Decision:** `LocationMap.astro` renders `location-map-oland.jpg` through `<Picture>` instead of
+the hand-drawn SVG of ADR-014, with a visible "© OpenStreetMap contributors" credit linking to
+`openstreetmap.org/copyright`. Tile *embeds* — Leaflet, Google, Mapbox — remain banned.
+**Why:** ADR-014 rejected a raster export on two grounds: the third-party request, and the
+copyright. Only the first was ever about the export itself, and a static image in
+`src/assets/` makes no request at all — the privacy claim survives intact. The second turned
+out to be a licence to satisfy rather than a wall: OSM is ODbL, and ODbL asks for a credit
+line, which the tile had room for once someone looked. What the schematic could not show, and
+this does, is the mainland approach, the bridge at Kalmar and the road you actually drive.
+**Consequence:** the credit is a **licence condition**. It lives inside `LocationMap.astro`
+rather than in the caller's caption row so it cannot be separated from the image, and it must
+stay visible — not a `title`, not an `alt`, not a comment. The component's API changed from
+`alt` to `locale`, because it now resolves two strings of its own. The tile is landscape
+(1104×960) where the drawing was portrait, so the contact page's right-hand column is shorter
+than the artboard. `mapCaption` no longer says "schematic" in any locale — it wasn't true any
+more, and `sizes="320px"` in the component is tied to `max-w-80` at the call site.
+**Don't:** swap this for a live tile layer to get pan and zoom. That trade has now been
+declined twice, and doing it would put a third-party request on the page whose neighbour is the
+privacy policy. Don't replace the image with an export from Google Maps either — their terms
+do not allow redistributing one as a static asset, which ODbL explicitly does.
 
 ## How to contribute to this file
 Add an ADR when you add or replace a library, make a non-obvious architectural choice, or

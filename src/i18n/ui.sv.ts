@@ -90,23 +90,13 @@ export const uiSv = {
         intro: 'Hör gärna av dig om du har frågor om stugorna, området eller din vistelse. Det går bra att ringa eller mejla — vi svarar så snart vi kan.',
         phoneHeading: 'Telefon',
         emailHeading: 'E-post',
-        bookingHeading: 'Bokning',
-        bookingBody:
-            'Själva bokningen och den aktuella tillgängligheten sköts via Stugknuten. Du hittar en länk till rätt stuga på varje stugsida.',
-        locationHeading: 'Var ligger stugorna?',
-        locationBody:
-            'Samtliga stugor ligger i Löt på östra Öland, ca 10 km från Köpingsvik och 15 km från Borgholm. Vägbeskrivning ges vid bokning.',
         callName: 'Ring {name}',
         languagesNote: 'Vi svarar på svenska och engelska.',
         addressHeading: 'Adress',
         directionsNote: 'Exakt vägbeskrivning till er stuga lämnas vid bokning.',
-        distancesHeading: 'Så hittar ni hit',
-        distanceUnit: '{km} km',
-        distanceKopingsvik: 'Köpingsvik',
-        distanceBorgholm: 'Borgholm',
-        distanceBeach: 'Närmaste badstrand',
-        mapAlt: 'Karta över Öland med Löt utmarkerat på öns mellersta del, öster om Borgholm.',
-        mapCaption: 'Schematisk karta. Löt ligger på mellersta Öland, nordost om Borgholm.'
+        mapAlt: 'Karta över Öland och Kalmarsund med Löt utmarkerat på öns mellersta del, nordost om Borgholm.',
+        mapCaption: 'Löt ligger på mellersta Öland, nordost om Borgholm.',
+        mapAttribution: '© OpenStreetMap'
     },
 
     birdwatching: {
