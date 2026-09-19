@@ -107,7 +107,7 @@
     bind:this={dialog}
     onclose={() => (open = false)}
     class="m-0 h-full max-h-none w-full max-w-none bg-[oklch(0.20_0.015_60)] p-0
-        backdrop:bg-[oklch(0.15_0.01_60_/_0.85)]">
+        backdrop:bg-[oklch(0.15_0.01_60/0.85)]">
     {#if open && current}
         <div class="flex h-full flex-col gap-3 p-4 sm:p-6">
             <div class="flex items-center justify-between gap-4">

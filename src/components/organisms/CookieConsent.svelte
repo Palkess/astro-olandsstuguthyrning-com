@@ -70,7 +70,7 @@
         aria-modal="false"
         aria-label={heading}>
         <div
-            class="border-border-strong bg-card shadow-banner rounded-card mx-auto flex max-w-[1100px]
+            class="border-border-strong bg-card shadow-banner rounded-card mx-auto flex max-w-275
                 flex-col gap-5 border p-5 sm:flex-row sm:items-center">
             <p class="text-small m-0 flex-1">
                 {body}
@@ -92,7 +92,7 @@
                     type="button"
                     onclick={() => choose('denied')}
                     class="border-border-strong text-text-heading hover:bg-surface-sunken
-                        rounded-button text-small border-[1.5px] px-[18px] py-[14px] font-semibold">
+                        rounded-button text-small border-[1.5px] px-4.5 py-3.5 font-semibold">
                     {decline}
                 </button>
             </div>

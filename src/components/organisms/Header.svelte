@@ -86,7 +86,7 @@
 <svelte:window onkeydown={onKeydown} onpointerdown={onPointerDown} />
 
 <header bind:this={headerEl} class="bg-card border-border relative z-40 border-b">
-    <div class="mx-auto flex h-20 max-w-[1440px] items-center gap-8 px-5 lg:px-12">
+    <div class="mx-auto flex h-20 max-w-360 items-center gap-8 px-5 lg:px-12">
         <a href={homeHref} class="flex flex-col leading-none no-underline">
             <span class="text-text-heading font-serif text-[1.125rem] lg:text-[1.375rem]">
                 {siteName}
@@ -105,7 +105,7 @@
                     <div class="relative">
                         <button
                             type="button"
-                            class="flex items-center gap-1.5 border-b-2 pb-[3px] font-medium
+                            class="flex items-center gap-1.5 border-b-2 pb-0.75 font-medium
                                 {cottagesActive || dropdownOpen
                                 ? 'border-accent text-text-heading'
                                 : 'text-text-body hover:text-text-heading border-transparent'}"
@@ -122,12 +122,12 @@
                         {#if dropdownOpen}
                             <div
                                 class="border-border bg-card shadow-dropdown rounded-card absolute
-                                    top-full right-0 mt-3 w-[340px] overflow-hidden border">
+                                    top-full right-0 mt-3 w-85 overflow-hidden border">
                                 {#each cottages as cottage, index (cottage.href)}
                                     <a
                                         href={cottage.href}
                                         class="border-border hover:bg-surface-sunken flex items-baseline
-                                            justify-between gap-3 px-[18px] py-3.5
+                                            justify-between gap-3 px-4.5 py-3.5
                                             no-underline
                                             {index > 0 ? 'border-t' : ''}
                                             {cottage.current ? 'bg-accent-soft' : ''}">
@@ -145,7 +145,7 @@
                 {:else}
                     <a
                         href={item.href}
-                        class="border-b-2 pb-[3px] font-medium no-underline
+                        class="border-b-2 pb-0.75 font-medium no-underline
                             {active === item.key
                             ? 'border-accent text-text-heading'
                             : 'text-text-body hover:text-text-heading border-transparent'}"
@@ -156,7 +156,7 @@
             {/each}
 
             <ul
-                class="bg-surface-sunken rounded-button m-0 flex list-none gap-0.5 p-[3px]"
+                class="bg-surface-sunken rounded-button m-0 flex list-none gap-0.5 p-0.75"
                 aria-label={labels.chooseLanguage}>
                 {#each languages as language (language.code)}
                     <li>
@@ -165,7 +165,7 @@
                             hreflang={language.code}
                             lang={language.code}
                             aria-current={language.current ? 'true' : undefined}
-                            class="rounded-chip text-small block px-2.5 py-[7px] no-underline
+                            class="rounded-chip text-small block px-2.5 py-1.75 no-underline
                                 {language.current
                                 ? 'bg-accent text-accent-contrast font-semibold'
                                 : 'text-text-body hover:text-text-heading font-medium'}">

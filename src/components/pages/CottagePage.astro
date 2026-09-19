@@ -50,8 +50,8 @@ const seeAllImages = interpolate(t.house.seeAllImages, { count: house.images.len
         sizes="(min-width: 1100px) 68vw, 100vw"
         loading="eager"
         fetchpriority="high"
-        pictureAttributes={{ class: 'lg:relative lg:min-h-[560px]' }}
-        class="aspect-3/2 w-full object-cover sm:aspect-[21/9] lg:absolute lg:inset-0 lg:aspect-auto
+        pictureAttributes={{ class: 'lg:relative lg:min-h-140' }}
+        class="aspect-3/2 w-full object-cover sm:aspect-21/9 lg:absolute lg:inset-0 lg:aspect-auto
             lg:h-full"
     />
 
@@ -89,7 +89,7 @@ const seeAllImages = interpolate(t.house.seeAllImages, { count: house.images.len
 
 <!-- Description + price panel -->
 <section
-    class="mx-auto grid max-w-[1440px] items-start gap-10 px-5 py-12 lg:grid-cols-[1fr_420px]
+    class="mx-auto grid max-w-360 items-start gap-10 px-5 py-12 lg:grid-cols-[1fr_420px]
         lg:gap-16 lg:px-12 lg:py-16">
     <div class="max-w-[70ch]">
         <h2 class="font-serif text-h2 mt-0 mb-4 font-normal">{t.house.aboutHeading}</h2>
@@ -100,13 +100,13 @@ const seeAllImages = interpolate(t.house.seeAllImages, { count: house.images.len
 </section>
 
 <!-- Photos -->
-<section id="bilder" class="mx-auto max-w-[1440px] scroll-mt-24 px-5 pb-14 lg:px-12">
+<section id="bilder" class="mx-auto max-w-360 scroll-mt-24 px-5 pb-14 lg:px-12">
     <CottageGallery {house} {locale} />
 </section>
 
 <!-- Video -->
 <section
-    class="mx-auto grid max-w-[1440px] items-center gap-8 px-5 pb-16 lg:grid-cols-2 lg:gap-14
+    class="mx-auto grid max-w-360 items-center gap-8 px-5 pb-16 lg:grid-cols-2 lg:gap-14
         lg:px-12">
     <YouTubeFacade
         client:visible
@@ -133,7 +133,7 @@ const seeAllImages = interpolate(t.house.seeAllImages, { count: house.images.len
 <!-- Booking band -->
 <section class="bg-accent-soft">
     <div
-        class="mx-auto flex max-w-[1440px] flex-col gap-6 px-5 py-12 lg:flex-row lg:items-center
+        class="mx-auto flex max-w-360 flex-col gap-6 px-5 py-12 lg:flex-row lg:items-center
             lg:gap-12 lg:px-12 lg:py-14">
         <div class="flex-1">
             <h2 class="font-serif text-h2 mt-0 mb-2.5 font-normal">

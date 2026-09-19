@@ -38,10 +38,10 @@ const distances = site.location.distancesKm;
         sizes="100vw"
         loading="eager"
         fetchpriority="high"
-        class="aspect-3/2 w-full object-cover sm:aspect-[21/9] lg:aspect-auto lg:h-[600px]"
+        class="aspect-3/2 w-full object-cover sm:aspect-21/9 lg:aspect-auto lg:h-150"
     />
 
-    <div class="mx-auto max-w-[1440px] px-5 lg:px-12">
+    <div class="mx-auto max-w-360 px-5 lg:px-12">
         <div class="mx-auto py-7 text-center lg:py-12">
             <h1 class="font-serif text-display m-0 font-normal">{t.home.heading}</h1>
             <p class="text-lead mt-3.5 mb-6">{t.home.tagline}</p>
@@ -59,7 +59,7 @@ const distances = site.location.distancesKm;
 
 <!-- Who we are -->
 <section
-    class="mx-auto grid max-w-[1440px] items-center gap-10 px-5 py-16 lg:grid-cols-2 lg:gap-14 lg:px-12 lg:py-20">
+    class="mx-auto grid max-w-360 items-center gap-10 px-5 py-16 lg:grid-cols-2 lg:gap-14 lg:px-12 lg:py-20">
     <Picture
         src={portrait}
         alt={t.home.welcomePortraitAlt}
@@ -81,7 +81,7 @@ const distances = site.location.distancesKm;
 <!-- Birdwatching -->
 <section class="bg-accent-soft">
     <div
-        class="mx-auto flex max-w-[1440px] flex-col gap-6 px-5 py-10 lg:flex-row lg:items-center
+        class="mx-auto flex max-w-360 flex-col gap-6 px-5 py-10 lg:flex-row lg:items-center
             lg:gap-10 lg:px-12 lg:py-11">
         <div class="flex-1">
             <SectionLabel tone="accent">{t.birdwatching.label}</SectionLabel>
@@ -95,7 +95,7 @@ const distances = site.location.distancesKm;
 </section>
 
 <!-- The cottages -->
-<section id="stugorna" class="mx-auto max-w-[1440px] scroll-mt-24 px-5 py-16 lg:px-12 lg:py-20">
+<section id="stugorna" class="mx-auto max-w-360 scroll-mt-24 px-5 py-16 lg:px-12 lg:py-20">
     <div class="mb-8 flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
         <h2 class="font-serif text-h2 m-0 font-normal">{t.home.cottagesHeading}</h2>
         <p class="text-text-muted m-0 text-small">{t.home.cottagesNote}</p>
