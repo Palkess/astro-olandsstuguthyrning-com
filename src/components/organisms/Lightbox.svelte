@@ -125,8 +125,12 @@
                 </button>
             </div>
 
+            <!--
+                Below `sm` the arrows float over the photo's edges instead of
+                flanking it, so the photo gets the full width of a phone.
+            -->
             <div
-                class="flex min-h-0 flex-1 items-center gap-3"
+                class="relative flex min-h-0 flex-1 items-center gap-3"
                 ontouchstart={onTouchStart}
                 ontouchend={onTouchEnd}>
                 {#if images.length > 1}
@@ -134,8 +138,9 @@
                         type="button"
                         aria-label={labels.previous}
                         onclick={() => show(index - 1)}
-                        class="flex size-11 flex-none items-center justify-center rounded-full
-                            bg-[oklch(0.30_0.015_60)] text-white hover:bg-[oklch(0.38_0.015_60)]">
+                        class="absolute left-0 z-10 flex size-11 flex-none items-center justify-center
+                            rounded-full bg-[oklch(0.30_0.015_60)] text-white
+                            hover:bg-[oklch(0.38_0.015_60)] sm:static">
                         <ChevronLeft size={22} strokeWidth={2} aria-hidden="true" />
                     </button>
                 {/if}
@@ -147,7 +152,7 @@
                     width={current.width}
                     height={current.height}
                     alt={current.caption}
-                    class="min-h-0 flex-1 object-contain"
+                    class="min-h-0 min-w-0 flex-1 object-contain"
                     style="max-height:100%" />
 
                 {#if images.length > 1}
@@ -155,8 +160,9 @@
                         type="button"
                         aria-label={labels.next}
                         onclick={() => show(index + 1)}
-                        class="flex size-11 flex-none items-center justify-center rounded-full
-                            bg-[oklch(0.30_0.015_60)] text-white hover:bg-[oklch(0.38_0.015_60)]">
+                        class="absolute right-0 z-10 flex size-11 flex-none items-center justify-center
+                            rounded-full bg-[oklch(0.30_0.015_60)] text-white
+                            hover:bg-[oklch(0.38_0.015_60)] sm:static">
                         <ChevronRight size={22} strokeWidth={2} aria-hidden="true" />
                     </button>
                 {/if}

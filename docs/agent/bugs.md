@@ -108,6 +108,14 @@ sentence by colour alone (1.4.1).
 **Don't** check a new text colour against `surface` alone — the ink comment in
 `src/styles/global.css` states the rule: every ground, the tinted ones included.
 
+### BUG-014 — The lightbox photo overflowed on phones *(fixed 2026-09-19)*
+The photo sits in a flex row between the previous/next buttons. A flex item's minimum width
+defaults to its content size, and for an `<img>` that is its intrinsic width — so the photo
+refused to shrink, pushed the next button off-screen and made the dialog scroll sideways.
+**Fixed by** `min-w-0` on the photo, and below `sm` floating the arrows over the photo's edges
+so it gets the full width of a phone instead of what is left between two buttons (swipe works
+there too). From `sm` up the arrows flank the photo as before.
+
 ### `client:visible` on the lightbox never hydrated *(fixed 2026-09-09)*
 `Lightbox.svelte` renders only a closed `<dialog>`. Astro's `client:visible` observes the
 island's children, a `display: none` element never intersects, so the island never hydrated and
