@@ -8,15 +8,14 @@ import tailwindcss from '@tailwindcss/vite';
 import { alternatePaths } from './src/i18n/routes';
 
 // ---------------------------------------------------------------------------
-// STAGING — served from https://new.olandsstuguthyrning.com (a CNAME to
-// palkess.github.io, set as the Pages custom domain). Because there IS a custom
-// domain, the site serves from the domain root and needs no `base`.
+// LIVE — served from https://olandsstuguthyrning.com, set as the Pages custom
+// domain (`public/CNAME` must match). Because there IS a custom domain, the site
+// serves from the domain root and needs no `base`.
 //
-// At cutover (docs/project-plan.md §8): change `site` to the apex domain and
-// update `public/CNAME` to match. Nothing else. The Layout keys `noindex` off
-// this hostname, so the staging copy stops being noindexed automatically.
+// The Layout keys `noindex` off this hostname: any other value (a staging
+// subdomain, say) is noindexed automatically. See docs/project-plan.md §8.
 // ---------------------------------------------------------------------------
-const site = 'https://new.olandsstuguthyrning.com';
+const site = 'https://olandsstuguthyrning.com';
 
 // https://astro.build/config
 export default defineConfig({

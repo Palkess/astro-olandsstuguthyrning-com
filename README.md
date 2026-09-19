@@ -11,8 +11,7 @@ Replaces the SvelteKit + MSSQL + IIS site at
 ## Quick links
 
 - 📋 [Project plan](docs/project-plan.md) — decisions, phases, cutover runbook
-- 🌐 Staging: https://new.olandsstuguthyrning.com (noindexed)
-- 🎯 Live (after cutover): https://olandsstuguthyrning.com
+- 🌐 Live: https://olandsstuguthyrning.com
 - 🎨 Design artifacts: https://claude.ai/code/artifact/b11c4586-acd9-422f-b4d8-f4228ccf5e92
 
 ## Built with
@@ -92,15 +91,14 @@ both the locale prefix and the `base` path.
 Every push to `main` runs `astro check` then `astro build` and publishes `dist/` to GitHub
 Pages. There is no manual deploy step.
 
-The site builds for **`new.olandsstuguthyrning.com`**, a staging subdomain CNAMEd to GitHub
-Pages. Because it has a custom domain it serves from the domain root, so there is **no `base`
-path** to reason about. Staging pages carry `noindex` (keyed off the hostname in
-`Layout.astro`), so they can't compete with the live site in search.
+The site builds for **`olandsstuguthyrning.com`**, served by GitHub Pages on its custom domain.
+Because it has a custom domain it serves from the domain root, so there is **no `base` path** to
+reason about. A build for any other hostname carries `noindex` (keyed off the hostname in
+`Layout.astro`), so a staging copy can't compete with the live site in search.
 
-⚠️ Going live means changing `site` in `astro.config.mjs` and `public/CNAME` to the apex domain,
-then repointing DNS — a deliberate, one-time change. Follow
-[the cutover runbook](docs/project-plan.md#8-cutover-runbook), which covers the records that must
-**not** be touched.
+⚠️ `site` in `astro.config.mjs`, `public/CNAME` and the DNS records move together. The
+[cutover runbook](docs/project-plan.md#8-cutover-runbook) covers the records that must **not**
+be touched — `kontakt@` is a live mailbox on this domain.
 
 ## Design
 

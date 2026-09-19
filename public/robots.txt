@@ -1,7 +1,7 @@
-# Crawling is allowed so that the `noindex` meta tag on staging is actually seen.
-# Blocking crawling here would NOT prevent indexing — it would only stop Google
-# reading the noindex. See src/layouts/Layout.astro.
+# Crawling is allowed everywhere. Any non-live build is kept out of search by a
+# `noindex` meta tag instead (src/layouts/Layout.astro) — blocking crawling here
+# would NOT prevent indexing, it would only stop Google reading the noindex.
 User-agent: *
 Disallow:
 
-Sitemap: https://new.olandsstuguthyrning.com/sitemap-index.xml
+Sitemap: https://olandsstuguthyrning.com/sitemap-index.xml
