@@ -73,7 +73,11 @@
         }
     }
 
-    /* Swipe, for the mobile artboard's "swipe på mobil". */
+    /*
+     * Swipe, for the mobile artboard's "swipe på mobil". A shortcut only — the
+     * buttons and arrow keys do the same — so it listens on the dialog, which
+     * already has a role, rather than giving a plain wrapper one it doesn't need.
+     */
     let touchStartX = 0;
 
     function onTouchStart(event: TouchEvent) {
@@ -106,6 +110,8 @@
 <dialog
     bind:this={dialog}
     onclose={() => (open = false)}
+    ontouchstart={onTouchStart}
+    ontouchend={onTouchEnd}
     class="m-0 h-full max-h-none w-full max-w-none bg-[oklch(0.20_0.015_60)] p-0
         backdrop:bg-[oklch(0.15_0.01_60/0.85)]">
     {#if open && current}
@@ -129,10 +135,7 @@
                 Below `sm` the arrows float over the photo's edges instead of
                 flanking it, so the photo gets the full width of a phone.
             -->
-            <div
-                class="relative flex min-h-0 flex-1 items-center gap-3"
-                ontouchstart={onTouchStart}
-                ontouchend={onTouchEnd}>
+            <div class="relative flex min-h-0 flex-1 items-center gap-3">
                 {#if images.length > 1}
                     <button
                         type="button"
