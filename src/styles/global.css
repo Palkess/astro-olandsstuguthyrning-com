@@ -76,18 +76,22 @@
     --color-surface-sunken: oklch(0.938 0.017 84);
     --color-card: oklch(0.995 0.004 85);
 
-    /* Ink — contrast on `surface`: 14.8:1 / 9.6:1 / 5.4:1 */
+    /*
+     * Ink — contrast on `surface`: 14.2:1 / 8.7:1 / 5.6:1. Muted must stay
+     * above 4.5:1 on every ground, the tinted ones included (lowest: 4.8:1 on
+     * `timber-soft`).
+     */
     --color-text-heading: oklch(0.265 0.021 60);
     --color-text-body: oklch(0.395 0.017 60);
-    --color-text-muted: oklch(0.525 0.014 62);
+    --color-text-muted: oklch(0.5 0.014 62);
 
-    /* Sea blue — links, buttons, the booking CTA. 7.1:1 with accent-contrast */
+    /* Sea blue — links, buttons, the booking CTA. 7.0:1 with accent-contrast */
     --color-accent: oklch(0.455 0.078 218);
     --color-accent-hover: oklch(0.385 0.072 218);
     --color-accent-soft: oklch(0.925 0.028 218);
     --color-accent-contrast: oklch(0.995 0.004 218);
 
-    /* Timber — second accent. Icons and rules, never type. 5.9:1 on surface */
+    /* Timber — second accent. Icons and rules, never type. 5.5:1 on surface */
     --color-timber: oklch(0.505 0.072 55);
     --color-timber-soft: oklch(0.925 0.03 62);
 

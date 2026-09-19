@@ -74,7 +74,11 @@
                 flex-col gap-5 border p-5 sm:flex-row sm:items-center">
             <p class="text-small m-0 flex-1">
                 {body}
-                <a href={privacyHref} class="text-accent hover:text-accent-hover">{readMore}</a>
+                <a
+                    href={privacyHref}
+                    class="text-accent hover:text-accent-hover underline underline-offset-2">
+                    {readMore}
+                </a>
             </p>
             <div class="flex flex-col gap-2.5 sm:flex-row">
                 <button
