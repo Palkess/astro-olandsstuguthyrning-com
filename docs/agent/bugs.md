@@ -88,6 +88,15 @@ is worse than declaring none. Found while verifying phase 6 output, not by any t
 **Fixed by** a `serialize` hook driven by `routeSlugs` (ADR-018). All 27 URLs now carry a
 complete, self-referencing set of three. **Don't** go back to the `i18n` option.
 
+### BUG-012 — The cottage hero photo left a gap under itself *(fixed 2026-09-19)*
+The photo beside the booking panel had a fixed height, but the panel grows with its copy. A
+cottage name that wraps — common in English and German, where names carry a translation in
+brackets — made the panel taller than the photo and left an empty strip beneath it.
+**Fixed by** positioning the photo absolutely inside its `<picture>`, which holds the minimum
+height, so the row takes its height from the panel and the photo fills it. **Don't** give the
+photo `h-full` in normal flow instead: the grid then sizes the row from the image's aspect ratio,
+and the hero grows with the viewport width.
+
 ### `client:visible` on the lightbox never hydrated *(fixed 2026-09-09)*
 `Lightbox.svelte` renders only a closed `<dialog>`. Astro's `client:visible` observes the
 island's children, a `display: none` element never intersects, so the island never hydrated and
