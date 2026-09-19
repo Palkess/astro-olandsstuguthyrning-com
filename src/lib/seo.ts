@@ -21,7 +21,7 @@
 import type { ImageMetadata } from 'astro';
 import { getImage } from 'astro:assets';
 
-import { houses, type AmenityIcon, type House } from '../data/houses';
+import { heroHouse, houses, type AmenityIcon, type House } from '../data/houses';
 import { site, stugknutenUrl } from '../data/site';
 import { getHouseImage } from './images';
 import { getHouseText, routeHref, useTranslations } from '../i18n';
@@ -69,13 +69,9 @@ export function houseOgImage(house: House): Promise<string> {
     );
 }
 
-/**
- * The site-wide social card. Uses the same photo as the home hero — the first
- * cottage's exterior — because the asset set still has no establishing shot of
- * the place (BUG-007). Replace both in the same commit when one arrives.
- */
+/** The site-wide social card: the same photo as the home hero (BUG-007). */
 export function siteOgImage(): Promise<string> {
-    return houseOgImage(houses[0]);
+    return houseOgImage(heroHouse);
 }
 
 /**
@@ -105,7 +101,7 @@ export function houseOgImageAlt(house: House, locale: Locale): string {
 }
 
 export function siteOgImageAlt(locale: Locale): string {
-    return houseOgImageAlt(houses[0], locale);
+    return houseOgImageAlt(heroHouse, locale);
 }
 
 function absolute(path: string, origin: URL): string {

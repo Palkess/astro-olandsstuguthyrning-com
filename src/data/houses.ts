@@ -184,3 +184,16 @@ export const houseSlugs = houses.map((house) => house.slug);
 export function getHouseBySlug(slug: string): House | undefined {
     return houses.find((house) => house.slug === slug);
 }
+
+/**
+ * The cottage whose main photo stands in for the home-page hero and the
+ * site-wide social card, until the site has an establishing shot of its own
+ * (BUG-007).
+ */
+const heroHouseSlug: HouseSlug = 'vita-huset';
+
+export const heroHouse: House = (() => {
+    const house = getHouseBySlug(heroHouseSlug);
+    if (!house) throw new Error(`heroHouseSlug '${heroHouseSlug}' matches no cottage.`);
+    return house;
+})();

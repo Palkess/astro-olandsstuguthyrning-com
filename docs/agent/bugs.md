@@ -55,12 +55,12 @@ already rounded upward once from the design's more optimistic figures.
 who plans a dawn trip around a wrong number will not be pleased.
 
 ### BUG-007 — There is no home-page hero photograph
-The home hero uses the **first cottage's** exterior shot (`houses[0].mainImage`), read from the
-data rather than hard-coded, because the asset set contains no wide establishing photo of the
+The home hero and the site-wide social card use one cottage's main photo, chosen by `heroHouse`
+in `src/data/houses.ts`, because the asset set contains no wide establishing photo of the
 place — the old site had none either.
 **Action:** ask the owners for one landscape shot of the village or a cottage in evening light
 at 1920×1280 or better, drop it in `src/assets/images/`, and import it directly in
-`HomePage.astro`. Until then this is a deliberate stand-in, not an oversight.
+`HomePage.astro` and `siteOgImage()` in `src/lib/seo.ts`. Until then this is a deliberate stand-in, not an oversight.
 
 ### BUG-008 — The favicon is a placeholder
 `public/favicon.svg` is a plain gable mark drawn from the design tokens. The phase 3 design

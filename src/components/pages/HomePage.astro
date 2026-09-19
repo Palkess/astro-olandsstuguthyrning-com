@@ -8,7 +8,7 @@ import Button from '../atoms/Button.astro';
 import SectionLabel from '../atoms/SectionLabel.astro';
 import CottageCard from '../molecules/CottageCard.astro';
 
-import { houses } from '../../data/houses';
+import { heroHouse, houses } from '../../data/houses';
 import { site } from '../../data/site';
 import { getHouseImage } from '../../lib/images';
 import { getHouseText, interpolate, routeHref, useTranslations, type Locale } from '../../i18n';
@@ -22,12 +22,6 @@ interface Props {
 const { locale } = Astro.props;
 const t = useTranslations(locale);
 
-/*
- * There is no dedicated home-page hero photograph in the asset set — the old
- * site had none either. Until one exists, the hero is the first cottage's
- * exterior shot, read from the data rather than hard-coded to a file name.
- */
-const heroHouse = houses[1];
 const heroImage = getHouseImage(heroHouse.slug, heroHouse.mainImage);
 const heroAlt = getHouseText(locale, heroHouse.slug).name;
 

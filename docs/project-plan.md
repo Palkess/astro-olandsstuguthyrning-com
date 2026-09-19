@@ -378,7 +378,7 @@ until Phase 9, so rollback is a DNS change and nothing more.
 | Confirm 2026 prices and fee amounts | Owners | No (D19) — but ask at Phase 7 review |
 | Is the 2021 bird list current? | Owners | No |
 | Favicon / logo | Owners or a designer | No — placeholder mark in place, BUG-008 |
-| A home-page hero photograph | Owners | No — first cottage's exterior stands in, BUG-007 |
+| A home-page hero photograph | Owners | No — a cottage photo stands in, BUG-007 |
 | A landscape bird/alvar photograph | Owners | No — the bird-list photo stands in, BUG-009 |
 | Confirm the birdwatching travel times | Owners | No — estimated from distances, BUG-010 |
 
